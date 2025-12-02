@@ -1,61 +1,55 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Bonificaciones - Juego</title>
+    <title>Game Bonus Calculator</title>
     <link rel="stylesheet" href="main.css">
-    <script src="main.js" defer></script>
 </head>
 <body>
     <div class="container">
-        <h1>Calculadora de Bonificaciones</h1>
-        <p class="subtitle">Calcula los valores necesarios para alcanzar los objetivos en tu juego</p>
-        
+        <h1>Bonus Calculator</h1>        
         <div class="calculator-grid">
             <div class="input-section">
-                <h2>Valores Base</h2>
+                <h2>Base Values</h2>
                 <div class="input-group">
-                    <label for="x-value">Valor X (entero)</label>
-                    <input type="number" id="x-value" placeholder="Opcional">
+                    <label for="x-value">Value X (integer)</label>
+                    <input type="number" id="x-value" placeholder="Optional">
                 </div>
                 <div class="input-group">
-                    <label for="y-value">Valor Y (entero)</label>
-                    <input type="number" id="y-value" placeholder="Opcional">
+                    <label for="y-value">Value Y (integer)</label>
+                    <input type="number" id="y-value" placeholder="Optional">
                 </div>
                 <div class="input-group">
-                    <label for="z-value">Valor Z (entero)</label>
-                    <input type="number" id="z-value" placeholder="Opcional">
+                    <label for="z-value">Value Z (integer)</label>
+                    <input type="number" id="z-value" placeholder="Optional">
                 </div>
                 <div class="warning">
-                    <strong>Nota:</strong> Introduce de 0 a 3 valores. La calculadora determinará automáticamente cuál es el valor "t" necesario para completar.
+                    <strong>Note:</strong> Enter 0 to 3 values. The calculator will automatically determine the required values.
                 </div>
             </div>
             
             <div class="bonus-section">
-                <h2>Bonificaciones</h2>
-                <div class="checkbox-group">
-                    <input type="checkbox" id="guild-bonus-check" checked>
-                    <label for="guild-bonus-check">Bonus del Gremio</label>
-                </div>
-                <div class="bonus-slider">
-                    <label for="guild-bonus">% Gremio:</label>
-                    <input type="range" id="guild-bonus" min="0" max="35" value="10" step="1">
-                    <span class="bonus-value" id="guild-value">10%</span>
+                <h2>Bonuses</h2>
+                
+                <div class="input-group">
+                    <label for="guild-bonus">Guild Bonus (%)</label>
+                    <input type="number" id="guild-bonus" min="0" max="35" value="10">
+                    <div class="bonus-note">Maximum: 35%</div>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="festival-bonus-check" checked>
-                    <label for="festival-bonus-check">Festival de Color (25%)</label>
+                    <label for="festival-bonus-check">Color Festival (25%)</label>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="totem-bonus-check" checked>
-                    <label for="totem-bonus-check">Tótem Dorado (20%)</label>
+                    <label for="totem-bonus-check">Golden Totem (20%)</label>
                 </div>
                 
                 <div class="input-group">
-                    <label>Objetivo a alcanzar</label>
+                    <label>Target Objective</label>
                     <div class="objective-selector">
                         <button class="objective-btn active" id="obj-max">2,999,997</button>
                         <button class="objective-btn" id="obj-min">999,999</button>
@@ -64,34 +58,35 @@
             </div>
         </div>
         
-        <button id="calculate-btn">Calcular Valores Necesarios</button>
+        <button id="calculate-btn">Calculate Required Values</button>
         
         <div class="results-section">
-            <h2>Resultados</h2>
+            <h2>Results</h2>
             <div id="results-container">
                 <div class="result-item">
-                    <div class="result-title">Valores introducidos:</div>
+                    <div class="result-title">Input values:</div>
                     <div class="result-value" id="input-values">X: -, Y: -, Z: -</div>
                 </div>
                 
                 <div class="result-item">
-                    <div class="result-title">Bonificaciones aplicadas:</div>
+                    <div class="result-title">Applied bonuses:</div>
                     <div class="result-value" id="bonus-values">0%</div>
                 </div>
                 
                 <div class="result-item">
-                    <div class="result-title">Valor calculado (t):</div>
+                    <div class="result-title">Calculated value (t):</div>
                     <div class="result-value" id="t-value">-</div>
                     <div class="explanation" id="t-explanation"></div>
                 </div>
                 
                 <div class="result-item">
-                    <div class="result-title">Total con bonificaciones:</div>
+                    <div class="result-title">Total with bonuses:</div>
                     <div class="result-value" id="total-value">-</div>
                     <div class="explanation" id="total-explanation"></div>
                 </div>
             </div>
         </div>
     </div>
+    <script src="main.js"></script>
 </body>
 </html>

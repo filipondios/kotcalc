@@ -1,35 +1,42 @@
 * {
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
 }
 
 body {
-    background-color: #1a1a2e;
-    color: #e6e6e6;
+    background-color: #050505; /* deep black-gray */
+    color: #e6e6e6; /* slightly lighter text */
     margin: 0;
     padding: 20px;
     line-height: 1.6;
+    min-height: 100vh;
 }
 
 .container {
     max-width: 900px;
     margin: 0 auto;
-    background-color: #16213e;
-    border-radius: 10px;
+    background-color: #0d0d0d; /* neutral black/gray container */
+    border-radius: 12px;
     padding: 30px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    border: 1px solid #1e1e1e;
 }
 
 h1 {
     text-align: center;
-    color: #4cc9f0;
+    color: #60a5fa;
     margin-bottom: 10px;
     font-size: 2.2rem;
+    font-weight: 600;
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .subtitle {
     text-align: center;
-    color: #a9a9a9;
+    color: #9ca3af;
     margin-bottom: 30px;
     font-size: 1.1rem;
 }
@@ -42,154 +49,196 @@ h1 {
 }
 
 .input-section, .bonus-section, .results-section {
-    background-color: #0f3460;
-    border-radius: 8px;
-    padding: 20px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    background-color: #0f0f10; /* darker neutral section */
+    border-radius: 10px;
+    padding: 25px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.6);
+    border: 1px solid #262626;
+    transition: all 0.3s ease;
+}
+
+.input-section:hover, .bonus-section:hover, .results-section:hover {
+    border-color: #303030;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.55);
 }
 
 h2 {
-    color: #4cc9f0;
-    border-bottom: 2px solid #4cc9f0;
-    padding-bottom: 8px;
+    color: #93c5fd; /* keep blue accent */
+    border-bottom: 2px solid #3b82f6; /* keep blue accent */
+    padding-bottom: 10px;
     margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 1.4rem;
 }
 
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 label {
     display: block;
-    margin-bottom: 5px;
-    color: #c5c5c5;
-    font-weight: 600;
+    margin-bottom: 8px;
+    color: #cfcfcf; /* lighter neutral label color */
+    font-weight: 500;
+    font-size: 0.95rem;
 }
 
 input[type="number"] {
     width: 100%;
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #4cc9f0;
-    background-color: #1a1a2e;
-    color: white;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #2b2b2b;
+    background-color: #0b0b0b; /* numeric inputs in dark gray/black */
+    color: #f3f4f6;
     font-size: 1rem;
+    transition: all 0.2s;
+}
+
+input[type="number"]:focus {
+    outline: none;
+    border-color: #60a5fa;
+    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    background-color: #0d0d0d;
+}
+
+.bonus-note {
+    font-size: 0.85rem;
+    color: #9ca3af;
+    margin-top: 5px;
+    font-style: italic;
 }
 
 input[type="checkbox"] {
-    margin-right: 10px;
+    margin-right: 12px;
     transform: scale(1.2);
+    accent-color: #3b82f6;
 }
 
 .checkbox-group {
     display: flex;
     align-items: center;
-    margin-bottom: 12px;
-}
-
-.bonus-slider {
-    display: flex;
-    align-items: center;
     margin-bottom: 15px;
+    padding: 8px;
+    border-radius: 6px;
+    transition: background-color 0.2s;
 }
 
-.bonus-slider input {
-    flex-grow: 1;
-    margin: 0 10px;
+.checkbox-group:hover {
+    background-color: rgba(59, 130, 246, 0.05); /* leave subtle blue hover */
 }
 
-.bonus-value {
-    min-width: 40px;
-    text-align: center;
-    font-weight: bold;
-    color: #4cc9f0;
+.checkbox-group label {
+    margin-bottom: 0;
+    cursor: pointer;
+    color: #e2e2e2; /* neutral light text for checkbox labels */
 }
 
 .objective-selector {
     display: flex;
     justify-content: space-between;
     margin-bottom: 20px;
+    gap: 10px;
 }
 
 .objective-btn {
     flex: 1;
-    padding: 12px;
-    margin: 0 5px;
-    background-color: #1a1a2e;
-    border: 2px solid #4cc9f0;
-    color: white;
-    border-radius: 5px;
+    padding: 14px;
+    background-color: #121212; /* neutral button background */
+    border: 2px solid #2b2b2b;
+    color: #d3d3d3;
+    border-radius: 8px;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 600;
     transition: all 0.3s;
+    font-size: 0.95rem;
 }
 
 .objective-btn.active {
-    background-color: #4cc9f0;
-    color: #1a1a2e;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    border-color: #3b82f6;
+    color: white;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
-.objective-btn:hover {
-    background-color: #3ab5d6;
+.objective-btn:hover:not(.active) {
+    background-color: #1b1b1b;
+    border-color: #3a3a3a;
+    transform: translateY(-2px);
 }
 
 button {
     display: block;
     width: 100%;
-    padding: 15px;
-    background-color: #4cc9f0;
-    color: #16213e;
+    padding: 16px;
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 10px;
     font-size: 1.1rem;
-    font-weight: bold;
+    font-weight: 600;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: all 0.3s;
     margin-top: 15px;
+    letter-spacing: 0.5px;
 }
 
 button:hover {
-    background-color: #3ab5d6;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+    background: linear-gradient(135deg, #4f9cf9, #2563eb);
 }
 
 .result-item {
-    background-color: #1a1a2e;
-    border-radius: 5px;
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 4px solid #4cc9f0;
+    background-color: #161617; /* slightly lighter result background */
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-left: 4px solid #3b82f6;
+    transition: transform 0.2s;
+}
+
+.result-item:hover {
+    transform: translateX(4px);
+    background-color: #1b1b1b; /* subtle lightening on hover */
 }
 
 .result-title {
-    font-weight: bold;
-    color: #4cc9f0;
-    margin-bottom: 5px;
+    font-weight: 600;
+    color: #93c5fd;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .result-value {
-    font-size: 1.3rem;
-    font-weight: bold;
+    font-size: 1.4rem;
+    font-weight: 700;
     color: #ffffff;
+    margin-bottom: 5px;
 }
 
 .explanation {
     font-size: 0.9rem;
-    color: #a9a9a9;
-    margin-top: 5px;
+    color: #9ca3af;
+    margin-top: 8px;
+    line-height: 1.5;
 }
 
 .highlight {
-    color: #f72585;
-    font-weight: bold;
+    color: #f472b6;
+    font-weight: 600;
 }
 
 .warning {
-    color: #ffcc00;
-    background-color: rgba(255, 204, 0, 0.1);
-    padding: 10px;
-    border-radius: 5px;
-    margin-top: 15px;
-    border-left: 4px solid #ffcc00;
+    color: #fbbf24;
+    background-color: rgba(251, 191, 36, 0.1);
+    padding: 12px;
+    border-radius: 8px;
+    margin-top: 20px;
+    border-left: 4px solid #fbbf24;
+    font-size: 0.9rem;
 }
 
 @media (max-width: 768px) {
@@ -198,7 +247,7 @@ button:hover {
     }
     
     .container {
-        padding: 15px;
+        padding: 20px;
     }
     
     .objective-selector {
@@ -208,4 +257,32 @@ button:hover {
     .objective-btn {
         margin: 5px 0;
     }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #0c0c0c;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #393939;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #575757;
 }

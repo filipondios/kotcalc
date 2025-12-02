@@ -1,17 +1,15 @@
-// Elementos del DOM
+// DOM Elements
 const xInput = document.getElementById('x-value');
 const yInput = document.getElementById('y-value');
 const zInput = document.getElementById('z-value');
-const guildBonusCheck = document.getElementById('guild-bonus-check');
-const guildBonusSlider = document.getElementById('guild-bonus');
-const guildBonusValue = document.getElementById('guild-value');
+const guildBonusInput = document.getElementById('guild-bonus');
 const festivalBonusCheck = document.getElementById('festival-bonus-check');
 const totemBonusCheck = document.getElementById('totem-bonus-check');
 const objMaxBtn = document.getElementById('obj-max');
 const objMinBtn = document.getElementById('obj-min');
 const calculateBtn = document.getElementById('calculate-btn');
 
-// Elementos de resultados
+// Result Elements
 const inputValuesDisplay = document.getElementById('input-values');
 const bonusValuesDisplay = document.getElementById('bonus-values');
 const tValueDisplay = document.getElementById('t-value');
@@ -19,15 +17,19 @@ const tExplanationDisplay = document.getElementById('t-explanation');
 const totalValueDisplay = document.getElementById('total-value');
 const totalExplanationDisplay = document.getElementById('total-explanation');
 
-// Variables de estado
-let objective = 2999997; // Objetivo por defecto
+// State Variables
+let objective = 2999997; // Default objective
 
-// Actualizar valor del slider del gremio
-guildBonusSlider.addEventListener('input', function() {
-    guildBonusValue.textContent = `${this.value}%`;
+// Validate guild bonus on change
+guildBonusInput.addEventListener('change', function() {
+    let value = parseInt(this.value);
+    if (isNaN(value)) value = 0;
+    if (value < 0) value = 0;
+    if (value > 35) value = 35;
+    this.value = value;
 });
 
-// Selección de objetivo
+// Objective selection
 objMaxBtn.addEventListener('click', function() {
     objective = 2999997;
     objMaxBtn.classList.add('active');
@@ -40,105 +42,105 @@ objMinBtn.addEventListener('click', function() {
     objMinBtn.classList.add('active');
 });
 
-// Función principal de cálculo
+// Main calculation function
 calculateBtn.addEventListener('click', function() {
-    // Obtener valores de entrada
+    // Get input values
     const x = parseInput(xInput.value);
     const y = parseInput(yInput.value);
     const z = parseInput(zInput.value);
     
-    // Calcular bonificaciones
-    const guildBonus = guildBonusCheck.checked ? parseInt(guildBonusSlider.value) / 100 : 0;
+    // Calculate bonuses
+    const guildBonus = parseInt(guildBonusInput.value) / 100;
     const festivalBonus = festivalBonusCheck.checked ? 0.25 : 0;
     const totemBonus = totemBonusCheck.checked ? 0.20 : 0;
     const totalBonus = guildBonus + festivalBonus + totemBonus;
     
-    // Mostrar valores de entrada y bonificaciones
+    // Update display
     updateDisplay(x, y, z, totalBonus);
     
-    // Determinar cuántos valores se han proporcionado
+    // Determine how many values are provided
     const providedValues = [x, y, z].filter(val => val !== null);
     const count = providedValues.length;
     
-    // Calcular según la cantidad de valores proporcionados
+    // Calculate based on the number of provided values
     let result, tValue, explanation;
     
     if (count === 0) {
-        // Caso 1: No se proporcionan valores
+        // Case 1: No values provided
         result = calculateForZeroValues(totalBonus, objective);
         tValue = result.t;
-        explanation = "Se necesitan tres valores idénticos (t) para alcanzar el objetivo con las bonificaciones aplicadas.";
+        explanation = "Three identical values (t) are needed to reach the objective with applied bonuses.";
     } else if (count === 1) {
-        // Caso 2: Se proporciona un valor
+        // Case 2: One value provided
         const singleValue = providedValues[0];
         result = calculateForOneValue(singleValue, totalBonus, objective);
         tValue = result.t;
-        explanation = `Con el valor proporcionado (${singleValue}), se necesitan dos valores idénticos (t) para alcanzar el objetivo con las bonificaciones aplicadas.`;
+        explanation = `With the provided value (${singleValue}), two identical values (t) are needed to reach the objective with applied bonuses.`;
     } else if (count === 2) {
-        // Caso 3: Se proporcionan dos valores
+        // Case 3: Two values provided
         const [val1, val2] = providedValues;
         result = calculateForTwoValues(val1, val2, totalBonus, objective);
         tValue = result.t;
-        explanation = `Con los valores proporcionados (${val1}, ${val2}), se necesita un valor adicional (t) para alcanzar el objetivo con las bonificaciones aplicadas.`;
+        explanation = `With the provided values (${val1}, ${val2}), one additional value (t) is needed to reach the objective with applied bonuses.`;
     } else {
-        // Caso 4: Se proporcionan tres valores
+        // Case 4: Three values provided
         result = calculateForThreeValues(x, y, z, totalBonus, objective);
-        tValue = "N/A (todos los valores proporcionados)";
-        explanation = `Se han proporcionado los tres valores. Se calcula el resultado total con las bonificaciones aplicadas.`;
+        tValue = "N/A (all values provided)";
+        explanation = `All three values have been provided. Calculating total result with applied bonuses.`;
     }
     
-    // Mostrar resultados
-    tValueDisplay.textContent = tValue;
+    // Display results
+    tValueDisplay.textContent = formatNumber(tValue);
     tExplanationDisplay.textContent = explanation;
     
-    // Calcular y mostrar total final
+    // Calculate and display final total
     const finalSum = count === 3 ? x + y + z : 
-                    count === 2 ? providedValues[0] + providedValues[1] + result.t :
-                    count === 1 ? providedValues[0] + result.t + result.t :
-                    result.t + result.t + result.t;
+                   count === 2 ? providedValues[0] + providedValues[1] + result.t :
+                   count === 1 ? providedValues[0] + result.t + result.t :
+                   result.t + result.t + result.t;
     
     const finalTotal = applyBonuses(finalSum, totalBonus);
     const cappedTotal = capResult(finalTotal, finalSum);
     
     totalValueDisplay.textContent = formatNumber(cappedTotal);
-    totalExplanationDisplay.innerHTML = `Suma base: ${formatNumber(finalSum)} + ${(totalBonus*100).toFixed(0)}% = ${formatNumber(finalTotal)} <span class="highlight">→ Ajustado a: ${formatNumber(cappedTotal)}</span>`;
+    totalExplanationDisplay.innerHTML = `Base sum: ${formatNumber(finalSum)} + ${(totalBonus*100).toFixed(0)}% = ${formatNumber(finalTotal)} <span class="highlight">→ Adjusted to: ${formatNumber(cappedTotal)}</span>`;
 });
 
-// Función para parsear valores de entrada
+// Parse input values
 function parseInput(value) {
     const parsed = parseInt(value);
     return isNaN(parsed) ? null : Math.max(0, parsed);
 }
 
-// Función para aplicar bonificaciones
+// Apply bonuses to sum
 function applyBonuses(sum, bonus) {
     return Math.floor(sum * (1 + bonus));
 }
 
-// Función para limitar el resultado según las reglas del juego
+// Cap result according to game rules
 function capResult(total, baseSum) {
-    // Si la suma base es <= 999,999, el resultado se limita a 999,999
+    // If base sum is <= 999,999, result is capped at 999,999
     if (baseSum <= 999999) {
         return Math.min(total, 999999);
     }
-    // El resultado máximo permitido es 2,999,997
+    // Maximum allowed result is 2,999,997
     return Math.min(total, 2999997);
 }
 
-// Función para calcular cuando no se proporcionan valores
+// Calculate for zero values
 function calculateForZeroValues(bonus, objective) {
-    // Necesitamos: 3t * (1 + bonus) = objetivo (o el más cercano posible)
-    // Pero con el límite de que si 3t <= 999,999, el resultado se limita a 999,999
+    // We need: 3t * (1 + bonus) = objective (or closest possible)
+    // But with the limit that if 3t <= 999,999, result is capped at 999,999
     
-    // Primero, calculamos t para alcanzar exactamente el objetivo
+    // First, calculate t to reach exact objective
     let t = Math.floor(objective / (3 * (1 + bonus)));
     
-    // Verificamos si con este t, la suma base (3t) es <= 999,999
+    // Check if with this t, base sum (3t) is <= 999,999
     const baseSum = 3 * t;
     const totalWithBonus = applyBonuses(baseSum, bonus);
     const cappedTotal = capResult(totalWithBonus, baseSum);
     
-    // Si no alcanzamos el objetivo, incrementamos t hasta encontrar el mejor valor
+    // If we don't reach the objective, increment t to find best value
     if (cappedTotal < objective) {
         while (true) {
             const newT = t + 1;
@@ -160,28 +162,27 @@ function calculateForZeroValues(bonus, objective) {
     return { t };
 }
 
-// Función para calcular cuando se proporciona un valor
+// Calculate for one value
 function calculateForOneValue(value, bonus, objective) {
-    // Necesitamos: (value + 2t) * (1 + bonus) = objetivo (o el más cercano posible)
+    // We need: (value + 2t) * (1 + bonus) = objective (or closest possible)
     
-    // Calculamos t para alcanzar exactamente el objetivo
+    // Calculate t to reach exact objective
     let t = Math.floor((objective / (1 + bonus) - value) / 2);
     
-    // Verificamos el resultado con este t
+    // Check result with this t
     const baseSum = value + 2 * t;
     const totalWithBonus = applyBonuses(baseSum, bonus);
     const cappedTotal = capResult(totalWithBonus, baseSum);
     
-    // Si no alcanzamos el objetivo, ajustamos t
+    // Adjust t if needed
     if (cappedTotal < objective) {
-        // Probamos incrementando t hasta encontrar el mejor valor
+        // Try incrementing t to find best value
         while (true) {
             const newT = t + 1;
             const newBaseSum = value + 2 * newT;
             const newTotalWithBonus = applyBonuses(newBaseSum, bonus);
             const newCappedTotal = capResult(newTotalWithBonus, newBaseSum);
             
-            // Si nos pasamos del objetivo o el nuevo total es menor que el anterior, paramos
             if (newCappedTotal > objective || newCappedTotal < cappedTotal) {
                 break;
             }
@@ -192,7 +193,7 @@ function calculateForOneValue(value, bonus, objective) {
             }
         }
     } else if (cappedTotal > objective) {
-        // Si nos pasamos, reducimos t
+        // If we overshoot, reduce t
         while (true) {
             const newT = t - 1;
             if (newT < 0) break;
@@ -201,7 +202,7 @@ function calculateForOneValue(value, bonus, objective) {
             const newTotalWithBonus = applyBonuses(newBaseSum, bonus);
             const newCappedTotal = capResult(newTotalWithBonus, newBaseSum);
             
-            // Si estamos más cerca del objetivo con el nuevo t, lo usamos
+            // If we're closer to objective with new t, use it
             if (Math.abs(newCappedTotal - objective) < Math.abs(cappedTotal - objective) && newCappedTotal <= objective) {
                 t = newT;
             } else {
@@ -213,28 +214,27 @@ function calculateForOneValue(value, bonus, objective) {
     return { t };
 }
 
-// Función para calcular cuando se proporcionan dos valores
+// Calculate for two values
 function calculateForTwoValues(val1, val2, bonus, objective) {
-    // Necesitamos: (val1 + val2 + t) * (1 + bonus) = objetivo (o el más cercano posible)
+    // We need: (val1 + val2 + t) * (1 + bonus) = objective (or closest possible)
     
-    // Calculamos t para alcanzar exactamente el objetivo
+    // Calculate t to reach exact objective
     let t = Math.floor(objective / (1 + bonus) - val1 - val2);
     
-    // Verificamos el resultado con este t
+    // Check result with this t
     const baseSum = val1 + val2 + t;
     const totalWithBonus = applyBonuses(baseSum, bonus);
     const cappedTotal = capResult(totalWithBonus, baseSum);
     
-    // Si no alcanzamos el objetivo, ajustamos t
+    // Adjust t if needed
     if (cappedTotal < objective) {
-        // Probamos incrementando t hasta encontrar el mejor valor
+        // Try incrementing t to find best value
         while (true) {
             const newT = t + 1;
             const newBaseSum = val1 + val2 + newT;
             const newTotalWithBonus = applyBonuses(newBaseSum, bonus);
             const newCappedTotal = capResult(newTotalWithBonus, newBaseSum);
             
-            // Si nos pasamos del objetivo o el nuevo total es menor que el anterior, paramos
             if (newCappedTotal > objective || newCappedTotal < cappedTotal) {
                 break;
             }
@@ -245,7 +245,7 @@ function calculateForTwoValues(val1, val2, bonus, objective) {
             }
         }
     } else if (cappedTotal > objective) {
-        // Si nos pasamos, reducimos t
+        // If we overshoot, reduce t
         while (true) {
             const newT = t - 1;
             if (newT < 0) break;
@@ -254,7 +254,7 @@ function calculateForTwoValues(val1, val2, bonus, objective) {
             const newTotalWithBonus = applyBonuses(newBaseSum, bonus);
             const newCappedTotal = capResult(newTotalWithBonus, newBaseSum);
             
-            // Si estamos más cerca del objetivo con el nuevo t, lo usamos
+            // If we're closer to objective with new t, use it
             if (Math.abs(newCappedTotal - objective) < Math.abs(cappedTotal - objective) && newCappedTotal <= objective) {
                 t = newT;
             } else {
@@ -266,7 +266,7 @@ function calculateForTwoValues(val1, val2, bonus, objective) {
     return { t };
 }
 
-// Función para calcular cuando se proporcionan tres valores
+// Calculate for three values
 function calculateForThreeValues(x, y, z, bonus, objective) {
     const baseSum = x + y + z;
     const totalWithBonus = applyBonuses(baseSum, bonus);
@@ -275,20 +275,21 @@ function calculateForThreeValues(x, y, z, bonus, objective) {
     return { t: null, total: cappedTotal };
 }
 
-// Función para actualizar la visualización de valores de entrada y bonificaciones
+// Update display
 function updateDisplay(x, y, z, totalBonus) {
-    // Mostrar valores de entrada
-    const xDisplay = x !== null ? x : "-";
-    const yDisplay = y !== null ? y : "-";
-    const zDisplay = z !== null ? z : "-";
+    // Display input values
+    const xDisplay = x !== null ? formatNumber(x) : "-";
+    const yDisplay = y !== null ? formatNumber(y) : "-";
+    const zDisplay = z !== null ? formatNumber(z) : "-";
     inputValuesDisplay.textContent = `X: ${xDisplay}, Y: ${yDisplay}, Z: ${zDisplay}`;
     
-    // Mostrar bonificaciones
+    // Display bonuses
     const bonusPercent = (totalBonus * 100).toFixed(0);
     let bonusText = `${bonusPercent}% (`;
     
-    if (guildBonusCheck.checked) {
-        bonusText += `Gremio: ${guildBonusSlider.value}%, `;
+    const guildBonus = parseInt(guildBonusInput.value);
+    if (guildBonus > 0) {
+        bonusText += `Guild: ${guildBonus}%, `;
     }
     
     if (festivalBonusCheck.checked) {
@@ -296,10 +297,10 @@ function updateDisplay(x, y, z, totalBonus) {
     }
     
     if (totemBonusCheck.checked) {
-        bonusText += `Tótem: 20%, `;
+        bonusText += `Totem: 20%, `;
     }
     
-    // Eliminar la última coma y espacio
+    // Remove trailing comma and space
     if (bonusText.endsWith(", ")) {
         bonusText = bonusText.slice(0, -2);
     }
@@ -308,13 +309,25 @@ function updateDisplay(x, y, z, totalBonus) {
     bonusValuesDisplay.textContent = bonusText;
 }
 
-// Función para formatear números con separadores de miles
+// Format number with thousands separators
 function formatNumber(num) {
+    if (num === null || num === undefined) return "-";
+    if (typeof num === 'string' && num === "N/A (all values provided)") return num;
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
-// Inicialización de la página
+// Initialize page
 window.addEventListener('DOMContentLoaded', function() {
-    // Calcular automáticamente al cargar la página
+    // Auto-calculate on page load
     calculateBtn.click();
+    
+    // Add input event listeners for real-time validation
+    [xInput, yInput, zInput, guildBonusInput].forEach(input => {
+        input.addEventListener('input', function() {
+            this.style.backgroundColor = '#1a2234';
+            setTimeout(() => {
+                this.style.backgroundColor = '';
+            }, 300);
+        });
+    });
 });

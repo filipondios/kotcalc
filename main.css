@@ -63,8 +63,11 @@ h1 {
 }
 
 h2 {
-    color: #93c5fd; /* keep blue accent */
-    border-bottom: 2px solid #3b82f6; /* keep blue accent */
+    background: linear-gradient(135deg, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    border-bottom: 2px solid #3b82f6;
     padding-bottom: 10px;
     margin-top: 0;
     margin-bottom: 20px;
@@ -155,10 +158,9 @@ input[type="checkbox"] {
 }
 
 .objective-btn.active {
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background-color: #3b82f6;
     border-color: #3b82f6;
     color: white;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.2);
 }
 
 .objective-btn:hover:not(.active) {
@@ -171,22 +173,20 @@ button {
     display: block;
     width: 100%;
     padding: 16px;
-    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    background-color: #3b82f6;
     color: white;
     border: none;
     border-radius: 10px;
     font-size: 1.1rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: transform 0.15s;
     margin-top: 15px;
     letter-spacing: 0.5px;
 }
 
 button:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-    background: linear-gradient(135deg, #4f9cf9, #2563eb);
 }
 
 .result-item {

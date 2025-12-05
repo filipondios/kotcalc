@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Game Bonus Calculator</title>
+    <title>Bonus Calculator</title>
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
@@ -13,17 +13,15 @@
             <div class="input-section">
                 <h2>Base Values</h2>
                 <div class="input-group">
-                    <label for="x-value">Value X (integer)</label>
-                    <input type="number" id="x-value" placeholder="Optional">
+                    <input type="number" id="x-value" min="100" max="999999" placeholder="Optional">
                 </div>
                 <div class="input-group">
-                    <label for="y-value">Value Y (integer)</label>
-                    <input type="number" id="y-value" placeholder="Optional">
+                    <input type="number" id="y-value" min="100" max="999999" placeholder="Optional">
                 </div>
                 <div class="input-group">
-                    <label for="z-value">Value Z (integer)</label>
-                    <input type="number" id="z-value" placeholder="Optional">
+                    <input type="number" id="z-value" min="100" max="999999" placeholder="Optional">
                 </div>
+                <div id="input-errors" class="warning" style="display:none;margin-top:12px"></div>
                 <div class="warning">
                     <strong>Note:</strong> Enter 0 to 3 values. The calculator will automatically determine the required values.
                 </div>
@@ -57,30 +55,31 @@
                 </div>
             </div>
         </div>
-        
         <button id="calculate-btn">Calculate Required Values</button>
-        
         <div class="results-section">
             <h2>Results</h2>
             <div id="results-container">
                 <div class="result-item">
-                    <div class="result-title">Input values:</div>
+                    <div class="result-title">Input values</div>
                     <div class="result-value" id="input-values">X: -, Y: -, Z: -</div>
                 </div>
                 
                 <div class="result-item">
-                    <div class="result-title">Applied bonuses:</div>
+                    <div class="result-title">Applied bonuses</div>
                     <div class="result-value" id="bonus-values">0%</div>
                 </div>
-                
                 <div class="result-item">
-                    <div class="result-title">Calculated value (t):</div>
+                    <div class="result-title">Calculated necessary value/s</div>
                     <div class="result-value" id="t-value">-</div>
                     <div class="explanation" id="t-explanation"></div>
                 </div>
-                
                 <div class="result-item">
-                    <div class="result-title">Total with bonuses:</div>
+                    <div class="result-title">Bonus amount (bonuses only)</div>
+                    <div class="result-value" id="total-bonus-obtained">-</div>
+                    <div class="explanation" id="total-bonus-explanation"></div>
+                </div>
+                <div class="result-item">
+                    <div class="result-title">Total with bonuses</div>
                     <div class="result-value" id="total-value">-</div>
                     <div class="explanation" id="total-explanation"></div>
                 </div>

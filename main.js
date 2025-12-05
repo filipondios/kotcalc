@@ -1,13 +1,19 @@
-// DOM Elements
+// input gem values
 const xInput = document.getElementById('x-value');
 const yInput = document.getElementById('y-value');
 const zInput = document.getElementById('z-value');
+
+// input bonus values
 const guildBonusInput = document.getElementById('guild-bonus');
 const festivalBonusCheck = document.getElementById('festival-bonus-check');
 const totemBonusCheck = document.getElementById('totem-bonus-check');
+
+// objective buttons
 const objMaxBtn = document.getElementById('obj-max');
 const objMinBtn = document.getElementById('obj-min');
+
 const calculateBtn = document.getElementById('calculate-btn');
+const inputErrorsDisplay = document.getElementById('input-errors');
 
 // Result Elements
 const inputValuesDisplay = document.getElementById('input-values');
@@ -16,11 +22,8 @@ const tValueDisplay = document.getElementById('t-value');
 const tExplanationDisplay = document.getElementById('t-explanation');
 const totalValueDisplay = document.getElementById('total-value');
 const totalExplanationDisplay = document.getElementById('total-explanation');
+let objective = 2999997;
 
-// State Variables
-let objective = 2999997; // Default objective
-
-// Validate guild bonus on change
 guildBonusInput.addEventListener('change', function() {
     let value = parseInt(this.value);
     if (isNaN(value)) value = 0;
@@ -29,7 +32,57 @@ guildBonusInput.addEventListener('change', function() {
     this.value = value;
 });
 
-// Objective selection
+[xInput, yInput, zInput].forEach(inp => {
+    inp.addEventListener('input', function() {
+        // remove any non-digit characters
+        const cleaned = this.value.replace(/\D/g, '');
+        this.value = cleaned;
+        // clamp to max while typing
+        if (this.value !== '') {
+            const num = parseInt(this.value, 10);
+            if (num > 999999) this.value = '999999';
+        }
+    });
+});
+
+guildBonusInput.addEventListener('input', function() {
+    // Sanitize guild bonus input to digits only and clamp on input
+    const cleaned = this.value.replace(/\D/g, '');
+    this.value = cleaned;
+    if (this.value !== '') {
+        const num = parseInt(this.value, 10);
+        if (num > 35) this.value = '35';
+        if (num < 0) this.value = '0';
+    }
+});
+
+function validateInputs() {
+    const errors = [];
+    // validate (x,y,z) if provided (optional)
+    [ {el: xInput, name: 'X'}, {el: yInput, name: 'Y'}, {el: zInput, name: 'Z'} ].forEach(item => {
+        const v = item.el.value.trim();
+        if (v !== '') {
+            const n = parseInt(v, 10);
+            if (n < 100 || n > 999999) {
+                errors.push(`Check your inputs. Gem values must be at least 100 and 999.999 at most`);
+            }
+        }
+    });
+
+    if (errors.length > 0) {
+        if (inputErrorsDisplay) {
+            inputErrorsDisplay.innerHTML = errors.map(e => `${e}`).join('<br>');
+            inputErrorsDisplay.style.display = 'block';
+        }
+        return false;
+    }
+    if (inputErrorsDisplay) {
+        inputErrorsDisplay.style.display = 'none';
+        inputErrorsDisplay.innerHTML = '';
+    }
+    return true;
+}
+
 objMaxBtn.addEventListener('click', function() {
     objective = 2999997;
     objMaxBtn.classList.add('active');
@@ -42,82 +95,109 @@ objMinBtn.addEventListener('click', function() {
     objMinBtn.classList.add('active');
 });
 
-// Main calculation function
 calculateBtn.addEventListener('click', function() {
     // Get input values
     const x = parseInput(xInput.value);
     const y = parseInput(yInput.value);
     const z = parseInput(zInput.value);
-    
+
     // Calculate bonuses
     const guildBonus = parseInt(guildBonusInput.value) / 100;
     const festivalBonus = festivalBonusCheck.checked ? 0.25 : 0;
     const totemBonus = totemBonusCheck.checked ? 0.20 : 0;
     const totalBonus = guildBonus + festivalBonus + totemBonus;
-    
-    // Update display
+
+    // Validate inputs first
+    if (!validateInputs()) return;
     updateDisplay(x, y, z, totalBonus);
-    
+
     // Determine how many values are provided
     const providedValues = [x, y, z].filter(val => val !== null);
     const count = providedValues.length;
-    
-    // Calculate based on the number of provided values
-    let result, tValue, explanation;
-    
+    let result, explanation;
+
     if (count === 0) {
-        // Case 1: No values provided
         result = calculateForZeroValues(totalBonus, objective);
-        tValue = result.t;
-        explanation = "Three identical values (t) are needed to reach the objective with applied bonuses.";
+        explanation = "Three identical gems are needed to reach the objective with applied bonuses.";
     } else if (count === 1) {
-        // Case 2: One value provided
         const singleValue = providedValues[0];
         result = calculateForOneValue(singleValue, totalBonus, objective);
-        tValue = result.t;
-        explanation = `With the provided value (${singleValue}), two identical values (t) are needed to reach the objective with applied bonuses.`;
+        explanation = `With the provided gem (${singleValue}), two identical gems are needed.`;
     } else if (count === 2) {
-        // Case 3: Two values provided
         const [val1, val2] = providedValues;
         result = calculateForTwoValues(val1, val2, totalBonus, objective);
-        tValue = result.t;
-        explanation = `With the provided values (${val1}, ${val2}), one additional value (t) is needed to reach the objective with applied bonuses.`;
+        explanation = `With the provided gems (${val1}, ${val2}), one additional gem is needed.`;
     } else {
-        // Case 4: Three values provided
         result = calculateForThreeValues(x, y, z, totalBonus, objective);
-        tValue = "N/A (all values provided)";
-        explanation = `All three values have been provided. Calculating total result with applied bonuses.`;
+        explanation = `All three gem values have been provided`;
     }
-    
-    // Display results
-    tValueDisplay.textContent = formatNumber(tValue);
+
+    // Display preliminary t result (may be adjusted below)
+    const tRaw = result.t;
+    tValueDisplay.textContent = formatNumber(tRaw);
     tExplanationDisplay.textContent = explanation;
-    
-    // Calculate and display final total
+
+    // Calculate base sum
     const finalSum = count === 3 ? x + y + z : 
-                   count === 2 ? providedValues[0] + providedValues[1] + result.t :
-                   count === 1 ? providedValues[0] + result.t + result.t :
-                   result.t + result.t + result.t;
-    
-    const finalTotal = applyBonuses(finalSum, totalBonus);
+        count === 2 ? providedValues[0] + providedValues[1] + result.t :
+        count === 1 ? providedValues[0] + result.t + result.t :
+        result.t + result.t + result.t;
+
+    // Compute uncapped totals
+    const uncappedFinalTotal = applyBonuses(finalSum, totalBonus);
+    const uncappedBonusOnly = Math.floor(finalSum * totalBonus);
+
+    // Cap applied bonus so base + bonus doesn't exceed objective
+    const maxAllowedBonus = Math.max(0, objective - finalSum);
+    let appliedBonusOnly = Math.min(uncappedBonusOnly, maxAllowedBonus);
+    let finalTotal = finalSum + appliedBonusOnly;
+
+    // Keep legacy cap result for compatibility
     const cappedTotal = capResult(finalTotal, finalSum);
-    
-    totalValueDisplay.textContent = formatNumber(cappedTotal);
-    totalExplanationDisplay.innerHTML = `Base sum: ${formatNumber(finalSum)} + ${(totalBonus*100).toFixed(0)}% = ${formatNumber(finalTotal)} <span class="highlight">→ Adjusted to: ${formatNumber(cappedTotal)}</span>`;
+
+    // If t is a number and exceeds the individual cap (999,999) we report it's impossible
+    const tNumeric = (typeof result.t === 'number') ? result.t : null;
+    if (tNumeric !== null && tNumeric > 999999) {
+        const msg = `Cannot reach objective (${formatNumber(objective)})`;
+        tValueDisplay.textContent = msg;
+        tExplanationDisplay.textContent = `Required value (${formatNumber(tNumeric)}) exceeds 999,999.`;
+        totalValueDisplay.textContent = "-";
+        totalExplanationDisplay.textContent = `Cannot reach ${formatNumber(objective)} with t ≤ 999,999.`;
+        const totalBonusObtainedEl = document.getElementById('total-bonus-obtained');
+        const totalBonusExplanationEl = document.getElementById('total-bonus-explanation');
+        if (totalBonusObtainedEl) totalBonusObtainedEl.textContent = "-";
+        if (totalBonusExplanationEl) totalBonusExplanationEl.textContent = "";
+        return;
+    }
+
+    totalValueDisplay.textContent = formatNumber(finalTotal);
+    totalExplanationDisplay.innerHTML = `${formatNumber(finalSum)} + ${(totalBonus*100).toFixed(0)}% = ${formatNumber(uncappedFinalTotal)} <span class="highlight">→ Adjusted to: ${formatNumber(finalTotal)}</span>`;
+
+    const totalBonusObtainedEl = document.getElementById('total-bonus-obtained');
+    const totalBonusExplanationEl = document.getElementById('total-bonus-explanation');
+    if (totalBonusObtainedEl) {
+        totalBonusObtainedEl.textContent = formatNumber(appliedBonusOnly);
+    }
+    if (totalBonusExplanationEl) {
+        const percentText = `${(totalBonus*100).toFixed(0)}%`;
+        const baseText = `${percentText} of ${formatNumber(finalSum)} = ${formatNumber(uncappedBonusOnly)}`;
+        if (appliedBonusOnly < uncappedBonusOnly) {
+            totalBonusExplanationEl.innerHTML = `${baseText} <span class="highlight">→ Adjusted to: ${formatNumber(appliedBonusOnly)}</span>`;
+        } else {
+            totalBonusExplanationEl.textContent = `${baseText}`;
+        }
+    }
 });
 
-// Parse input values
 function parseInput(value) {
     const parsed = parseInt(value);
     return isNaN(parsed) ? null : Math.max(0, parsed);
 }
 
-// Apply bonuses to sum
 function applyBonuses(sum, bonus) {
     return Math.floor(sum * (1 + bonus));
 }
 
-// Cap result according to game rules
 function capResult(total, baseSum) {
     // If base sum is <= 999,999, result is capped at 999,999
     if (baseSum <= 999999) {
@@ -127,11 +207,9 @@ function capResult(total, baseSum) {
     return Math.min(total, 2999997);
 }
 
-// Calculate for zero values
 function calculateForZeroValues(bonus, objective) {
     // We need: 3t * (1 + bonus) = objective (or closest possible)
     // But with the limit that if 3t <= 999,999, result is capped at 999,999
-    
     // First, calculate t to reach exact objective
     let t = Math.floor(objective / (3 * (1 + bonus)));
     
@@ -162,10 +240,8 @@ function calculateForZeroValues(bonus, objective) {
     return { t };
 }
 
-// Calculate for one value
 function calculateForOneValue(value, bonus, objective) {
     // We need: (value + 2t) * (1 + bonus) = objective (or closest possible)
-    
     // Calculate t to reach exact objective
     let t = Math.floor((objective / (1 + bonus) - value) / 2);
     
@@ -217,7 +293,6 @@ function calculateForOneValue(value, bonus, objective) {
 // Calculate for two values
 function calculateForTwoValues(val1, val2, bonus, objective) {
     // We need: (val1 + val2 + t) * (1 + bonus) = objective (or closest possible)
-    
     // Calculate t to reach exact objective
     let t = Math.floor(objective / (1 + bonus) - val1 - val2);
     
@@ -262,66 +337,57 @@ function calculateForTwoValues(val1, val2, bonus, objective) {
             }
         }
     }
-    
     return { t };
 }
 
-// Calculate for three values
 function calculateForThreeValues(x, y, z, bonus, objective) {
+    // Calculate for three values
     const baseSum = x + y + z;
     const totalWithBonus = applyBonuses(baseSum, bonus);
     const cappedTotal = capResult(totalWithBonus, baseSum);
-    
     return { t: null, total: cappedTotal };
 }
 
-// Update display
 function updateDisplay(x, y, z, totalBonus) {
     // Display input values
     const xDisplay = x !== null ? formatNumber(x) : "-";
     const yDisplay = y !== null ? formatNumber(y) : "-";
     const zDisplay = z !== null ? formatNumber(z) : "-";
-    inputValuesDisplay.textContent = `X: ${xDisplay}, Y: ${yDisplay}, Z: ${zDisplay}`;
+    inputValuesDisplay.textContent = `${xDisplay}, ${yDisplay}, ${zDisplay}`;
     
     // Display bonuses
     const bonusPercent = (totalBonus * 100).toFixed(0);
-    let bonusText = `${bonusPercent}% (`;
-    
     const guildBonus = parseInt(guildBonusInput.value);
-    if (guildBonus > 0) {
-        bonusText += `Guild: ${guildBonus}%, `;
+    let bonusText = '';
+
+    if (totalBonus === 0) {
+        bonusText = '0%';
+    } else {
+        bonusText = `${bonusPercent}% (`;
+        if (guildBonus > 0) { bonusText += `Guild: ${guildBonus}%, `; }
+        if (festivalBonusCheck.checked) { bonusText += `Color Festival: 25%, `; }
+        if (totemBonusCheck.checked) { bonusText += `Golden Totem: 20%, `; }
+
+        // Remove trailing comma and space
+        if (bonusText.endsWith(', ')) {
+            bonusText = bonusText.slice(0, -2);
+        }
+
+        bonusText += ')';
     }
-    
-    if (festivalBonusCheck.checked) {
-        bonusText += `Festival: 25%, `;
-    }
-    
-    if (totemBonusCheck.checked) {
-        bonusText += `Totem: 20%, `;
-    }
-    
-    // Remove trailing comma and space
-    if (bonusText.endsWith(", ")) {
-        bonusText = bonusText.slice(0, -2);
-    }
-    
-    bonusText += ")";
+
     bonusValuesDisplay.textContent = bonusText;
 }
 
-// Format number with thousands separators
 function formatNumber(num) {
+    // Format number with thousands separators
     if (num === null || num === undefined) return "-";
-    if (typeof num === 'string' && num === "N/A (all values provided)") return num;
-    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if (typeof num === 'string') return num;
+    return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
 }
 
-// Initialize page
 window.addEventListener('DOMContentLoaded', function() {
-    // Auto-calculate on page load
     calculateBtn.click();
-    
-    // Add input event listeners for real-time validation
     [xInput, yInput, zInput, guildBonusInput].forEach(input => {
         input.addEventListener('input', function() {
             this.style.backgroundColor = '#1a2234';

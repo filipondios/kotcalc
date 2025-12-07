@@ -102,6 +102,17 @@ function calculateRitual(gem1, gem2, gem3, bonusPercent) {
     const baseSum = gem1 + gem2 + gem3;
     const resultCap = baseSum <= 999999 ? 999999 : 2999997;
     
+    // If base sum exceeds objective, no bonuses apply
+    if (baseSum >= objective) {
+        return {
+            baseSum,
+            bonusAmount: 0,
+            cappedBonus: 0,
+            finalTotal: baseSum,
+            wasAdjusted: false
+        };
+    }
+    
     // Apply bonuses
     const bonusAmount = Math.floor(baseSum * bonusPercent);
     const cappedBonus = Math.min(bonusAmount, resultCap - baseSum);
@@ -122,6 +133,15 @@ function calculateRequiredGem(providedGems, bonusPercent) {
     const providedSum = providedGems.reduce((sum, g) => sum + (g !== null ? g : 0), 0);
     const neededCount = 3 - count;
     
+    if (providedSum >= objective) {
+        // Calculate the negative delta (how much over the objective)
+        const delta = -(providedSum - objective);
+        return {
+            t: delta,
+            disableBonuses: true
+        };
+    }
+    
     // Calculate target before bonus
     const targetBeforeBonus = Math.floor(objective / (1 + bonusPercent));
     let t = Math.floor((targetBeforeBonus - providedSum) / neededCount);
@@ -137,7 +157,7 @@ function calculateRequiredGem(providedGems, bonusPercent) {
         t = t + 1;
     }
     
-    return t;
+    return { t, disableBonuses: false };
 }
 
 // Update display with gems and bonuses
@@ -188,14 +208,22 @@ calculateBtn.addEventListener('click', function() {
     if (providedCount === 3) {
         // All gems provided - simple calculation
         const ritual = calculateRitual(gems[0], gems[1], gems[2], totalBonus);
-        
         tValueDisplay.textContent = "-";
         tExplanationDisplay.textContent = "All three gem values have been provided.";
         
-        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus, ritual.finalTotal, ritual.wasAdjusted, totalBonus);
+        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus, 
+            ritual.finalTotal, ritual.wasAdjusted, totalBonus);
     } else {
         // Need to calculate missing gem value(s)
-        const t = calculateRequiredGem(gems, totalBonus);
+        const result = calculateRequiredGem(gems, totalBonus);
+        const t = result.t;
+        const disableBonuses = result.disableBonuses;
+        
+        // If provided gems already meet objective, disable bonuses
+        let effectiveBonus = totalBonus;
+        if (disableBonuses) {
+            effectiveBonus = 0;
+        }
         
         // Check if t is too large
         if (t > 999999) {
@@ -210,16 +238,24 @@ calculateBtn.addEventListener('click', function() {
         
         // Handle negative t (base exceeds objective)
         if (t < 0) {
-            const perValueExcess = Math.abs(Math.floor(t));
-            const totalExcess = perValueExcess * (3 - providedCount);
-            tValueDisplay.textContent = formatNumber(perValueExcess);
-            tExplanationDisplay.textContent = `This represents an excess of ${formatNumber(perValueExcess)} per gem (total ${formatNumber(totalExcess)} across ${3 - providedCount} gems).`;
+            const perValueExcess = Math.floor(t);
+            const totalExcess = Math.abs(perValueExcess * (3 - providedCount));
+            const absValue = Math.abs(perValueExcess);
+            
+            // If disableBonuses is true, show as delta negative
+            if (disableBonuses) {
+                tValueDisplay.textContent = formatNumber(t);
+                tExplanationDisplay.textContent = `Delta: ${formatNumber(t)} (provided gems exceed objective by ${formatNumber(absValue)}).`;
+            } else {
+                tValueDisplay.textContent = formatNumber(perValueExcess);
+                tExplanationDisplay.textContent = `This represents an excess of ${formatNumber(absValue)} per gem (total ${formatNumber(totalExcess)} across ${3 - providedCount} gems).`;
+            }
         } else {
             tValueDisplay.textContent = formatNumber(t);
             const neededDesc = 3 - providedCount === 1 ? "one gem" : `${3 - providedCount} gems`;
             tExplanationDisplay.textContent = `${neededDesc} with value ${formatNumber(t)} is needed.`;
         }
-        
+
         // Build final gems with calculated value
         const finalGems = [...gems];
         for (let i = 0; i < 3; i++) {
@@ -228,8 +264,9 @@ calculateBtn.addEventListener('click', function() {
             }
         }
         
-        const ritual = calculateRitual(finalGems[0], finalGems[1], finalGems[2], totalBonus);
-        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus, ritual.finalTotal, ritual.wasAdjusted, totalBonus);
+        const ritual = calculateRitual(finalGems[0], finalGems[1], finalGems[2], effectiveBonus);
+        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus, 
+            ritual.finalTotal, ritual.wasAdjusted, effectiveBonus);
     }
 });
 

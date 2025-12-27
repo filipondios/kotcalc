@@ -53,7 +53,7 @@ function parseGemValue(value) {
 
 // Determine image filename for a gem value
 function getGemImageForValue(v) {
-    if (v == null || v < 100 && v < 300) return 'img/gem-blue-1.png';
+    if (v == null || v < 300) return 'img/gem-blue-1.png';
     if (v >= 300 && v < 1000) return 'img/gem-blue-2.png';
     if (v >= 1000 && v < 3000) return 'img/gem-blue-3.png';
     if (v >= 3000 && v < 10000) return 'img/gem-blue-4.png';

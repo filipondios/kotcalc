@@ -19,6 +19,10 @@ const totalExplanationDisplay = document.getElementById('total-explanation');
 const totalBonusObtainedEl = document.getElementById('total-bonus-obtained');
 const totalBonusExplanationEl = document.getElementById('total-bonus-explanation');
 const totemImg = document.getElementById('totem-img');
+// Gem icons next to inputs
+const gemXImg = document.getElementById('gem-x-img');
+const gemYImg = document.getElementById('gem-y-img');
+const gemZImg = document.getElementById('gem-z-img');
 
 const maxGemValue = 2999997;
 const maxBaseValue = 999999;
@@ -47,6 +51,24 @@ function parseGemValue(value) {
     return isNaN(parsed)? null : Math.max(0, parsed);
 }
 
+// Determine image filename for a gem value
+function getGemImageForValue(v) {
+    if (v == null || v < 100 && v < 300) return 'img/gem-blue-1.png';
+    if (v >= 300 && v < 1000) return 'img/gem-blue-2.png';
+    if (v >= 1000 && v < 3000) return 'img/gem-blue-3.png';
+    if (v >= 3000 && v < 10000) return 'img/gem-blue-4.png';
+    if (v >= 10000 && v < 30000) return 'img/gem-blue-5.png';
+    if (v >= 30000 && v < 100000) return 'img/gem-blue-6.png';
+    if (v >= 100000 && v < 300000) return 'img/gem-blue-7.png';
+    return 'img/gem-blue-8.png';
+}
+
+function updateGemImageForInput(inputEl, imgEl) {
+    if (!imgEl || !inputEl) return;
+    const val = parseGemValue(inputEl.value);
+    imgEl.src = getGemImageForValue(val);
+}
+
 [xInput, yInput, zInput].forEach(input => {
     // allow only digits and clamp to max gem value
     input.addEventListener('input', function() {
@@ -54,6 +76,10 @@ function parseGemValue(value) {
         if (this.value && parseInt(this.value) > maxBaseValue) {
             this.value = maxBaseValue.toString();
         }
+        // update corresponding gem image
+        if (this.id === 'x-value') updateGemImageForInput(this, gemXImg);
+        if (this.id === 'y-value') updateGemImageForInput(this, gemYImg);
+        if (this.id === 'z-value') updateGemImageForInput(this, gemZImg);
     });
 });
 
@@ -263,9 +289,14 @@ function updateTotemImage() {
     }
 }
 
+totemBonusCheck.addEventListener('change', updateTotemImage);
 window.addEventListener('DOMContentLoaded', function() {
     // initial setup on page load
     updateTotemImage();
+    // init gem images based on current input values
+    updateGemImageForInput(xInput, gemXImg);
+    updateGemImageForInput(yInput, gemYImg);
+    updateGemImageForInput(zInput, gemZImg);
     calculateBtn.click();
 });
 

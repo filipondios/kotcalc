@@ -3,25 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="/img/totem-bonus.png">
     <title>Bonus Calculator</title>
     <link rel="stylesheet" href="main.css">
 </head>
 <body>
     <div class="container">
         <div class="totem">
-            <img id="totem-img" src="img/normal-totem.png" alt="totem">
+            <img id="totem-img" src="img/normal-totem.png" alt="totem" height="150">
         </div>
 
         <div class="calculator-grid">
             <div class="input-section">
                 <h2>Gem Values</h2>
-                <div class="input-group">
+                <div class="input-group input-with-gem">
+                    <img id="gem-x-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
                     <input type="number" id="x-value" min="100" max="999999" placeholder="Optional">
                 </div>
-                <div class="input-group">
+                <div class="input-group input-with-gem">
+                    <img id="gem-y-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
                     <input type="number" id="y-value" min="100" max="999999" placeholder="Optional">
                 </div>
-                <div class="input-group">
+                <div class="input-group input-with-gem">
+                    <img id="gem-z-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
                     <input type="number" id="z-value" min="100" max="999999" placeholder="Optional">
                 </div>
                 <div id="input-errors" class="warning" style="display:none;margin-top:12px"></div>

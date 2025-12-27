@@ -152,6 +152,20 @@ input[type="checkbox"] {
     color: #e2e2e2;
 }
 
+/* Layout for gem inputs with icon on the left */
+.input-with-gem {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.input-with-gem .gem-icon {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+    flex: 0 0 48px;
+}
+
 .objective-selector {
     display: flex;
     justify-content: space-between;
@@ -299,4 +313,12 @@ button:hover {
 
 ::-webkit-scrollbar-thumb:hover {
     background: #575757;
+}
+
+img {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none;
+    -webkit-user-drag: none;
 }

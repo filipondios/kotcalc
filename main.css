@@ -315,6 +315,44 @@ button:hover {
     background: #575757;
 }
 
+/* Footer styling */
+.footer {
+    text-align: center;
+    margin-top: 60px;
+    padding: 30px 20px;
+    background-color: #0d0d0d;
+    border-top: 1px solid #262626;
+    border-radius: 12px;
+    color: #9ca3af;
+    font-size: 0.9rem;
+    line-height: 1.8;
+}
+
+.footer p {
+    margin: 8px 0;
+}
+
+.footer strong {
+    color: #3b82f6;
+    font-weight: 600;
+}
+
+.footer span {
+    color: #cfcfcf;
+    font-weight: 500;
+}
+
+.footer a {
+    color: #60a5fa;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.footer a:hover {
+    color: #93c5fd;
+    text-decoration: underline;
+}
+
 img {
     user-select: none;
     -webkit-user-select: none;

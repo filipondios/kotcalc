@@ -65,17 +65,6 @@ guildBonusInput.addEventListener('input', function() {
     }
 });
 
-function setObjectiveFromChecks() {
-    // Ensure only one objective is selected
-    if (objMaxCheck.checked) {
-        objective = maxGemValue;
-        objMinCheck.checked = false;
-    } else if (objMinCheck.checked) {
-        objective = maxBaseValue;
-        objMaxCheck.checked = false;
-    }
-}
-
 function calculateRitual(gem1, gem2, gem3, bonusPercent) {
     // Calculate ritual results given gem values and bonus
     const baseSum = gem1 + gem2 + gem3;
@@ -280,5 +269,17 @@ window.addEventListener('DOMContentLoaded', function() {
     calculateBtn.click();
 });
 
-objMaxCheck.addEventListener('change', setObjectiveFromChecks);
-objMinCheck.addEventListener('change', setObjectiveFromChecks);
+// change target objective when checkboxes are clicked
+objMaxCheck.addEventListener('click', () => {
+    objMaxCheck.checked = true;
+    objMinCheck.checked = false;
+    objective = maxGemValue;
+    calculateBtn.click();
+});
+
+objMinCheck.addEventListener('click', () => {
+    objMinCheck.checked = true;
+    objMaxCheck.checked = false;
+    objective = maxBaseValue;
+    calculateBtn.click();
+});

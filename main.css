@@ -175,9 +175,8 @@ input[type="checkbox"] {
 
 .objective-selector {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     margin-bottom: 20px;
-    gap: 10px;
 }
 
 .objective-btn {

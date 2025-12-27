@@ -8,7 +8,10 @@
 </head>
 <body>
     <div class="container">
-        <h1>Bonus Calculator</h1>        
+        <div class="totem">
+            <img id="totem-img" src="img/normal-totem.png" alt="totem">
+        </div>
+
         <div class="calculator-grid">
             <div class="input-section">
                 <h2>Gem Values</h2>
@@ -23,7 +26,8 @@
                 </div>
                 <div id="input-errors" class="warning" style="display:none;margin-top:12px"></div>
                 <div class="warning">
-                    <strong>Note:</strong> Enter 0 to 3 values. The calculator will automatically determine the required values.
+                    <strong>Note:</strong> Enter 0 to 3 values. The calculator will automatically 
+                    determine the required values.
                 </div>
             </div>
             
@@ -46,16 +50,34 @@
                     <label for="totem-bonus-check">Golden Totem (20%)</label>
                 </div>
                 
-                <div class="input-group">
+                <div class="checkbox-group">
+                    <input type="checkbox" id="universal-gem-wizard-check">
+                    <label for="universal-gem-wizard-check">Universal Gem Wizard (20%)</label>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="gem-wizard-check">
+                    <label for="gem-wizard-check">Gem Wizard (20%)</label>
+                </div>
+                
+                <div class="input-group" id="target-group">
                     <label>Target Objective</label>
                     <div class="objective-selector">
-                        <button class="objective-btn active" id="obj-max">2.999.997</button>
-                        <button class="objective-btn" id="obj-min">999.999</button>
+                        <div class="checkbox-group objective-option">
+                            <input type="radio" name="objective" id="obj-max-check" class="objective-check" checked>
+                            <label for="obj-max-check">2.999.997</label>
+                        </div>
+                        <div class="checkbox-group objective-option">
+                            <input type="radio" name="objective" id="obj-min-check" class="objective-check">
+                            <label for="obj-min-check">999.999</label>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
+
         <button id="calculate-btn">Calculate Required Values</button>
+        
         <div class="results-section">
             <h2>Results</h2>
             <div id="results-container">

@@ -127,6 +127,16 @@ input[type="number"]:focus {
     font-style: italic;
 }
 
+.objective-option {
+    flex-wrap: wrap;
+}
+
+.objective-option .obj-custom-note {
+    width: 100%;
+    margin-left: 40px;
+    margin-top: 6px;
+}
+
 input[type="checkbox"] {
     margin-right: 12px;
     transform: scale(1.2);
@@ -151,11 +161,10 @@ input[type="checkbox"] {
     color: #e2e2e2;
 }
 
-/* Layout for gem inputs with icon on the left */
 .input-with-gem {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 3px;
 }
 
 .input-with-gem .gem-icon {

@@ -8,6 +8,9 @@ const universalGemWizardCheck = document.getElementById('universal-gem-wizard-ch
 const gemWizardCheck = document.getElementById('gem-wizard-check');
 const objMaxCheck = document.getElementById('obj-max-check');
 const objMinCheck = document.getElementById('obj-min-check');
+const objCustomCheck = document.getElementById('obj-custom-check');
+const objCustomInput = document.getElementById('obj-custom-input');
+const objCustomContainer = document.getElementById('obj-custom-container');
 const calculateBtn = document.getElementById('calculate-btn');
 const inputErrorsDisplay = document.getElementById('input-errors');
 const inputValuesDisplay = document.getElementById('input-values');
@@ -195,6 +198,18 @@ calculateBtn.addEventListener('click', function() {
         parseGemValue(zInput.value)
     ];
 
+    // If custom objective selected, read its input and use it as objective (silent clamp)
+    if (objCustomCheck && objCustomCheck.checked) {
+        const raw = objCustomInput ? objCustomInput.value : '';
+        let parsed = parseInt(raw);
+        if (isNaN(parsed)) parsed = 300;
+        if (parsed < 300) parsed = 300;
+        if (parsed > maxGemValue) parsed = maxGemValue;
+        // hide any previous input error display
+        if (inputErrorsDisplay) inputErrorsDisplay.style.display = 'none';
+        objective = parsed;
+    }
+
     const bonusComponents = getBonusComponents();
     updateDisplay(gems, bonusComponents);    
     const totalBonus = bonusComponents.total;
@@ -297,6 +312,8 @@ window.addEventListener('DOMContentLoaded', function() {
     updateGemImageForInput(xInput, gemXImg);
     updateGemImageForInput(yInput, gemYImg);
     updateGemImageForInput(zInput, gemZImg);
+    // ensure custom input hidden initially
+    if (objCustomInput) objCustomInput.style.display = 'none';
     calculateBtn.click();
 });
 
@@ -304,6 +321,12 @@ window.addEventListener('DOMContentLoaded', function() {
 objMaxCheck.addEventListener('click', () => {
     objMaxCheck.checked = true;
     objMinCheck.checked = false;
+    if (objCustomCheck) objCustomCheck.checked = false;
+    if (objCustomInput) objCustomInput.style.display = 'none';
+    const note = document.getElementById('obj-custom-note');
+    if (note) note.style.display = 'none';
+    const label = document.getElementById('obj-custom-check-label');
+    if (label) label.style.display = 'inline';
     objective = maxGemValue;
     calculateBtn.click();
 });
@@ -311,6 +334,44 @@ objMaxCheck.addEventListener('click', () => {
 objMinCheck.addEventListener('click', () => {
     objMinCheck.checked = true;
     objMaxCheck.checked = false;
+    if (objCustomCheck) objCustomCheck.checked = false;
+    if (objCustomInput) objCustomInput.style.display = 'none';
+    const note = document.getElementById('obj-custom-note');
+    if (note) note.style.display = 'none';
+    const label = document.getElementById('obj-custom-check-label');
+    if (label) label.style.display = 'inline';
     objective = maxBaseValue;
     calculateBtn.click();
 });
+
+if (objCustomCheck) {
+    objCustomCheck.addEventListener('click', () => {
+        objCustomCheck.checked = true;
+        objMaxCheck.checked = false;
+        objMinCheck.checked = false;
+        if (objCustomInput) objCustomInput.style.display = 'inline-block';
+        const note = document.getElementById('obj-custom-note');
+        if (note) note.style.display = 'block';
+        const label = document.getElementById('obj-custom-check-label');
+        if (label) label.style.display = 'none';
+        // do not set objective here; validate on calculation
+        calculateBtn.click();
+    });
+}
+
+if (objCustomInput) {
+    objCustomInput.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+        if (this.value) {
+            const v = parseInt(this.value);
+            if (v > maxGemValue) this.value = maxGemValue.toString();
+        }
+    });
+    objCustomInput.addEventListener('blur', function() {
+        if (!this.value) return;
+        const v = parseInt(this.value);
+        if (isNaN(v) || v < 300) {
+            this.value = '300';
+        }
+    });
+}

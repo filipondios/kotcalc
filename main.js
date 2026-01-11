@@ -1,112 +1,83 @@
-const xInput = document.getElementById('x-value');
-const yInput = document.getElementById('y-value');
-const zInput = document.getElementById('z-value');
-const guildBonusInput = document.getElementById('guild-bonus');
-const festivalBonusCheck = document.getElementById('festival-bonus-check');
-const totemBonusCheck = document.getElementById('totem-bonus-check');
-const universalGemWizardCheck = document.getElementById('universal-gem-wizard-check');
-const gemWizardCheck = document.getElementById('gem-wizard-check');
-const objMaxCheck = document.getElementById('obj-max-check');
-const objMinCheck = document.getElementById('obj-min-check');
-const objCustomCheck = document.getElementById('obj-custom-check');
-const objCustomInput = document.getElementById('obj-custom-input');
-const objCustomContainer = document.getElementById('obj-custom-container');
-const calculateBtn = document.getElementById('calculate-btn');
-const inputErrorsDisplay = document.getElementById('input-errors');
-const inputValuesDisplay = document.getElementById('input-values');
-const bonusValuesDisplay = document.getElementById('bonus-values');
-const tValueDisplay = document.getElementById('t-value');
-const tExplanationDisplay = document.getElementById('t-explanation');
-const totalValueDisplay = document.getElementById('total-value');
-const totalExplanationDisplay = document.getElementById('total-explanation');
-const totalBonusObtainedEl = document.getElementById('total-bonus-obtained');
-const totalBonusExplanationEl = document.getElementById('total-bonus-explanation');
-const totemImg = document.getElementById('totem-img');
-const objCustomImg = document.getElementById('obj-custom-img');
-// Gem icons next to inputs
-const gemXImg = document.getElementById('gem-x-img');
-const gemYImg = document.getElementById('gem-y-img');
-const gemZImg = document.getElementById('gem-z-img');
-
-const maxGemValue = 2999997;
-const maxBaseValue = 999999;
-let objective = maxGemValue;
-const maxGuildBonus = 35;
-
-const bonusesConfig = {
-    guild: { el: guildBonusInput, percentFromValue: true, label: 'Guild' },
-    festival: { el: festivalBonusCheck, percent: 0.25, label: 'Festival' },
-    totem: { el: totemBonusCheck, percent: 0.20, label: 'Totem' },
-    universal: { el: universalGemWizardCheck, percent: 0.20, label: 'Universal Gem Wizard' },
-    gemWizard: { el: gemWizardCheck, percent: 0.20, label: 'Gem Wizard' }
+const CONFIG = {
+    MAX_GEM_VALUE: 2999997,
+    MAX_BASE_VALUE: 999999,
+    MAX_GUILD_BONUS: 35,
+    GEM_THRESHOLDS: [300, 1000, 3000, 10000, 30000, 100000, 300000, 1000000],
+    BASE_IMAGE: 'img/gem-blue',
+    EXTENSION: '.png',
+    PERFECT_GEM: 'img/perfect-gem.png'
 };
 
-const gemRanges = [
-    { min: 0, max: 299, image: 'img/gem-blue-1.png' },
-    { min: 300, max: 999, image: 'img/gem-blue-2.png' },
-    { min: 1000, max: 2999, image: 'img/gem-blue-3.png' },
-    { min: 3000, max: 9999, image: 'img/gem-blue-4.png' },
-    { min: 10000, max: 29999, image: 'img/gem-blue-5.png' },
-    { min: 30000, max: 99999, image: 'img/gem-blue-6.png' },
-    { min: 100000, max: 299999, image: 'img/gem-blue-7.png' },
-    { min: 300000, max: 999999, image: 'img/gem-blue-8.png' },
-    { min: 1000000, max: maxGemValue - 1, image: 'img/gem-blue-9.png' },
-    { min: maxGemValue, max: maxGemValue, image: 'img/perfect-gem.png' }
-];
+let objective = CONFIG.MAX_GEM_VALUE;
 
-function formatNumber(num) {
-    // format number with thousands separators (dots)
-    if (num === null || num === undefined) return "-";
-    if (typeof num === 'string') return num;
+const DOM = {
+    gemInputs: {
+        x: document.getElementById('x-value'),
+        y: document.getElementById('y-value'),
+        z: document.getElementById('z-value')
+    },
+    gemImages: {
+        x: document.getElementById('gem-x-img'),
+        y: document.getElementById('gem-y-img'),
+        z: document.getElementById('gem-z-img')
+    },
+    bonuses: {
+        guild: document.getElementById('guild-bonus'),
+        festival: document.getElementById('festival-bonus-check'),
+        totem: document.getElementById('totem-bonus-check'),
+        universal: document.getElementById('universal-gem-wizard-check'),
+        gemWizard: document.getElementById('gem-wizard-check')
+    },
+    objective: {
+        max: document.getElementById('obj-max-check'),
+        min: document.getElementById('obj-min-check'),
+        custom: document.getElementById('obj-custom-check'),
+        customInput: document.getElementById('obj-custom-input'),
+        customImg: document.getElementById('obj-custom-img')
+    },
+    results: {
+        inputValues: document.getElementById('input-values'),
+        bonusValues: document.getElementById('bonus-values'),
+        tValue: document.getElementById('t-value'),
+        tExplanation: document.getElementById('t-explanation'),
+        totalValue: document.getElementById('total-value'),
+        totalExplanation: document.getElementById('total-explanation'),
+        totalBonusObtained: document.getElementById('total-bonus-obtained'),
+        totalBonusExplanation: document.getElementById('total-bonus-explanation'),
+        totemImg: document.getElementById('totem-img')
+    },
+    calculateBtn: document.getElementById('calculate-btn')
+};
+
+const formatNumber = (num) => {
+    if (num === null || num === undefined || typeof num !== 'number') return "-";
     return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
-}
+};
 
-function parseGemValue(value) {
-    // parse gem value input, return null if invalid
+const parseGemValue = (value) => {
     const parsed = parseInt(value);
-    return isNaN(parsed)? null : Math.max(0, parsed);
-}
+    return isNaN(parsed) ? null : Math.max(0, parsed);
+};
 
-function getGemImageForValue(v) {
-    // get gem image path for given value
-    if (v == null) return gemRanges[0].image;
-    const range = gemRanges.find(range => v >= range.min && v <= range.max);
-    return range ? range.image : gemRanges[gemRanges.length - 1].image;
-}
-
-function updateGemImageForInput(inputEl, imgEl) {
-    if (!imgEl || !inputEl) return;
-    const val = parseGemValue(inputEl.value);
-    imgEl.src = getGemImageForValue(val);
-}
-
-[xInput, yInput, zInput].forEach(input => {
-    // allow only digits and clamp to max gem value
-    input.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-        if (this.value && parseInt(this.value) > maxBaseValue) {
-            this.value = maxBaseValue.toString();
+const getGemImageForValue = (v) => {
+    // determine gem image filename based on value
+    if (v == null || v < 300) return `${CONFIG.BASE_IMAGE}-1${CONFIG.EXTENSION}`;
+    if (v >= CONFIG.MAX_GEM_VALUE) return CONFIG.PERFECT_GEM;
+    const thresholds = CONFIG.GEM_THRESHOLDS;
+    
+    for (let i = thresholds.length - 1; i >= 0; i--) {
+        if (v >= thresholds[i]) {
+            return `${CONFIG.BASE_IMAGE}-${i + 2}${CONFIG.EXTENSION}`;
         }
-        // update corresponding gem image
-        if (this.id === 'x-value') updateGemImageForInput(this, gemXImg);
-        if (this.id === 'y-value') updateGemImageForInput(this, gemYImg);
-        if (this.id === 'z-value') updateGemImageForInput(this, gemZImg);
-    });
-});
-
-guildBonusInput.addEventListener('input', function() {
-    // allow only digits and clamp to max guild bonus
-    this.value = this.value.replace(/\D/g, '');
-    if (this.value && parseInt(this.value) > maxGuildBonus) {
-        this.value = maxGuildBonus.toString();
     }
-});
+    return `${CONFIG.BASE_IMAGE}-2${CONFIG.EXTENSION}`;
+};
 
-function calculateRitual(gem1, gem2, gem3, bonusPercent) {
-    // Calculate ritual results given gem values and bonus
+const calculateRitual = (gem1, gem2, gem3, bonusPercent) => {
+    // calculate ritual outcome based on gem values and bonus
     const baseSum = gem1 + gem2 + gem3;
-    const resultCap = baseSum <= maxBaseValue ? 
-        maxBaseValue : maxGemValue;
+    const resultCap = baseSum <= CONFIG.MAX_BASE_VALUE ? 
+        CONFIG.MAX_BASE_VALUE : CONFIG.MAX_GEM_VALUE;
 
     if (baseSum >= objective) {
         return {
@@ -129,10 +100,10 @@ function calculateRitual(gem1, gem2, gem3, bonusPercent) {
         finalTotal,
         wasAdjusted: cappedBonus !== bonusAmount
     };
-}
+};
 
-function calculateRequiredGem(providedGems, bonusPercent) {
-    // Calculate required gem value 't' to reach objective
+const calculateRequiredGem = (providedGems, bonusPercent) => {
+    // calculate required gem value 't' to reach objective
     const count = providedGems.filter(gem => gem !== null).length;
     const providedSum = providedGems.reduce((sum, gem) => sum + (gem !== null ? gem : 0), 0);
     const neededCount = 3 - count;
@@ -152,247 +123,291 @@ function calculateRequiredGem(providedGems, bonusPercent) {
     
     if (Math.abs(test2Final - objective) < Math.abs(test1Final - objective)) {
         t = t + 1;
-    } return { t, disableBonuses: false };
-}
-
-function getBonusComponents() {
-    // obtain active bonuses
-    const components = {};
-    const guild = (parseInt(bonusesConfig.guild.el.value) || 0)/100;
-    components.guild = guild;
-
-    let total = guild;
-    Object.keys(bonusesConfig).forEach(key => {
-        if (key === 'guild') return;
-        const cfg = bonusesConfig[key];
-        const el = cfg.el;
-        const val = (el && el.checked) ? cfg.percent : 0;
-        components[key] = val;
-        total += val;
-    });
-    components.total = total;
-    return components;
-}
-
-function updateDisplay(gems, bonusComponents) {
-    // update display with gems and bonuses values
-    const displays = gems.map(g => g === null ? "N/A" : formatNumber(g));
-    inputValuesDisplay.textContent = displays.join(", ");
-
-    const total = bonusComponents.total;
-    if (total === 0) {
-        bonusValuesDisplay.textContent = '0%';
-    } else {
-        const guildPercent = Math.round((bonusComponents.guild || 0) * 100);
-        let bonusText = `${(total * 100).toFixed(0)}% (`;
-        const parts = [];
-
-        if (guildPercent > 0) parts.push(`Guild: ${guildPercent}%`);
-        if (bonusComponents.festival) parts.push(`Festival: 25%`);
-        if (bonusComponents.totem) parts.push(`Totem: 20%`);
-        if (bonusComponents.universal) parts.push(`Universal Gem Wizard: 20%`);
-        if (bonusComponents.gemWizard) parts.push(`Gem Wizard: 20%`);
-
-        bonusText += parts.join(", ") + ')';
-        bonusValuesDisplay.textContent = bonusText;
     }
-}
+    return { t, disableBonuses: false };
+};
 
-calculateBtn.addEventListener('click', function() {
-    // main calculation logic on button click
+const getTotalBonus = () => {
+    // Calculate total bonus percentage from inputs
+    const guildBonus = (parseInt(DOM.bonuses.guild.value) || 0) / 100;
+    const additionalBonuses = [
+        DOM.bonuses.festival.checked ? 0.25 : 0,
+        DOM.bonuses.totem.checked ? 0.20 : 0,
+        DOM.bonuses.universal.checked ? 0.20 : 0,
+        DOM.bonuses.gemWizard.checked ? 0.20 : 0
+    ];
+    return guildBonus + additionalBonuses.reduce((sum, bonus) => sum + bonus, 0);
+};
+
+const getBonusesBreakdown = (totalBonus) => {
+    // Generate breakdown string for bonuses
+    const guildPercent = Math.round(((parseInt(DOM.bonuses.guild.value) || 0) / 100) * 100);
+    const parts = [];
+    
+    if (guildPercent > 0) parts.push(`Guild: ${guildPercent}%`);
+    if (DOM.bonuses.festival.checked) parts.push('Festival: 25%');
+    if (DOM.bonuses.totem.checked) parts.push('Totem: 20%');
+    if (DOM.bonuses.universal.checked) parts.push('Universal Gem Wizard: 20%');
+    if (DOM.bonuses.gemWizard.checked) parts.push('Gem Wizard: 20%');
+    
+    return {
+        percentage: `${(totalBonus * 100).toFixed(0)}%`,
+        breakdown: parts.length > 0 ? `(${parts.join(', ')})` : ''
+    };
+};
+
+const updateGemImageForInput = (inputEl, imgEl) => {
+    // Update gem image based on input value
+    if (!imgEl || !inputEl) return;
+    const val = parseGemValue(inputEl.value);
+    imgEl.src = getGemImageForValue(val);
+};
+
+const updateTotemImage = () => {
+    // Update totem image based on checkbox
+    if (!DOM.results.totemImg) return;
+    DOM.results.totemImg.src = DOM.bonuses.totem.checked ? 
+        'img/golden-totem.png' : 'img/normal-totem.png';
+};
+
+const updateDisplay = (gems, totalBonus) => {
+    // Update input gem values display
+    const displays = gems.map(g => g === null ? "N/A" : formatNumber(g));
+    DOM.results.inputValues.textContent = displays.join(", ");
+    
+    const bonusInfo = getBonusesBreakdown(totalBonus);
+    DOM.results.bonusValues.textContent = bonusInfo.percentage;
+    if (bonusInfo.breakdown) {
+        DOM.results.bonusValues.textContent += ` ${bonusInfo.breakdown}`;
+    }
+};
+
+const updateResults = (baseSum, bonusAmount, cappedBonus, finalTotal, wasAdjusted, totalBonus) => {
+    // Update total bonus obtained
+    DOM.results.totalBonusObtained.textContent = formatNumber(cappedBonus);
+    const bonusPercent = (totalBonus * 100).toFixed(0);
+
+    DOM.results.totalBonusExplanation.innerHTML = wasAdjusted
+        ? `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)} ` +
+          `<span class="highlight">→ Adjusted to: ${formatNumber(cappedBonus)}</span>`
+        : `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)}`;
+    
+    DOM.results.totalValue.textContent = formatNumber(finalTotal);
+    DOM.results.totalExplanation.textContent = 
+        `${formatNumber(baseSum)} + ${bonusPercent}% = ${formatNumber(finalTotal)}`;
+};
+
+const setObjective = (value, updateCustomImg = false) => {
+    objective = value;
+    if (updateCustomImg && DOM.objective.customImg) {
+        // only update image if custom objective is selected
+        DOM.objective.customImg.src = getGemImageForValue(value);
+    }
+};
+
+const handleCustomObjective = () => {
+    // read and validate custom objective input
+    const raw = DOM.objective.customInput.value;
+    let parsed = parseInt(raw);
+    
+    if (isNaN(parsed)) parsed = 300;
+    if (parsed < 300) parsed = 300;
+    if (parsed > CONFIG.MAX_GEM_VALUE) parsed = CONFIG.MAX_GEM_VALUE;
+    
+    setObjective(parsed);
+    DOM.objective.customInput.value = parsed;
+
+    if (DOM.objective.customImg) {
+        // only update image if custom objective is selected
+        DOM.objective.customImg.src = getGemImageForValue(parsed);
+    }
+};
+
+const showObjectiveCustomInput = (show) => {
+    DOM.objective.customInput.style.display = show ? 'inline-block' : 'none';
+    const note = document.getElementById('obj-custom-note');
+    const label = document.getElementById('obj-custom-check-label');
+    
+    if (note) note.style.display = show ? 'block' : 'none';
+    if (label) label.style.display = show ? 'none' : 'inline';
+};
+
+const setupInputValidation = () => {
+    Object.values(DOM.gemInputs).forEach(input => {
+        input.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value && parseInt(this.value) > CONFIG.MAX_BASE_VALUE) {
+                this.value = CONFIG.MAX_BASE_VALUE.toString();
+            }
+            
+            if (this.id === 'x-value') updateGemImageForInput(this, DOM.gemImages.x);
+            if (this.id === 'y-value') updateGemImageForInput(this, DOM.gemImages.y);
+            if (this.id === 'z-value') updateGemImageForInput(this, DOM.gemImages.z);
+        });
+    });
+    
+    // Guild bonus input
+    DOM.bonuses.guild.addEventListener('input', function() {
+        this.value = this.value.replace(/\D/g, '');
+        if (this.value && parseInt(this.value) > CONFIG.MAX_GUILD_BONUS) {
+            this.value = CONFIG.MAX_GUILD_BONUS.toString();
+        }
+    });
+};
+
+const performCalculation = () => {
+    // Main calculation logic
     const gems = [ 
-        parseGemValue(xInput.value),
-        parseGemValue(yInput.value),
-        parseGemValue(zInput.value)
+        parseGemValue(DOM.gemInputs.x.value),
+        parseGemValue(DOM.gemInputs.y.value),
+        parseGemValue(DOM.gemInputs.z.value)
     ];
 
-    // If custom objective selected, read its input and use it as objective (silent clamp)
-    if (objCustomCheck && objCustomCheck.checked) {
-        const raw = objCustomInput ? objCustomInput.value : '';
-        let parsed = parseInt(raw);
-        if (isNaN(parsed)) parsed = 300;
-        if (parsed < 300) parsed = 300;
-        if (parsed > maxGemValue) parsed = maxGemValue;
-        // hide any previous input error display
-        if (inputErrorsDisplay) inputErrorsDisplay.style.display = 'none';
-        objective = parsed;
+    if (DOM.objective.custom.checked) {
+        handleCustomObjective();
     }
 
-    const bonusComponents = getBonusComponents();
-    updateDisplay(gems, bonusComponents);    
-    const totalBonus = bonusComponents.total;
+    const totalBonus = getTotalBonus();
+    updateDisplay(gems, totalBonus);
     const providedCount = gems.filter(gem => gem !== null).length;
 
     if (providedCount === 3) {
-        // all gems provided, calculate directly
         const ritual = calculateRitual(gems[0], gems[1], gems[2], totalBonus);
-        tValueDisplay.textContent = "-";
-        tExplanationDisplay.textContent = "All three gem values have been provided.";
-
-        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus,
+        DOM.results.tValue.textContent = "-";
+        DOM.results.tExplanation.textContent = "All three gem values have been provided.";
+        updateResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus,
             ritual.finalTotal, ritual.wasAdjusted, totalBonus);
-    } else {
-        // calculate required gem/s value 't'
-        const result = calculateRequiredGem(gems, totalBonus);
-        const disableBonuses = result.disableBonuses;
-        const t = result.t;
-        
-        let effectiveBonus = totalBonus;
-        if (disableBonuses) {
-            effectiveBonus = 0;
-        }
-
-        if (t > maxGemValue) {
-            tValueDisplay.textContent = "-";
-            tExplanationDisplay.textContent = `Cannot reach objective (${formatNumber(objective)}) with gem values ≤ 999.999.`;
-            totalValueDisplay.textContent = "-";
-            totalExplanationDisplay.textContent = "";
-            totalBonusObtainedEl.textContent = "-";
-            totalBonusExplanationEl.textContent = "";
-            return;
-        }
-        
-        if (t < 0) {
-            const perValueExcess = Math.floor(t);
-            const totalExcess = Math.abs(perValueExcess * (3 - providedCount));
-            const absValue = Math.abs(perValueExcess);
-            
-            if (disableBonuses) {
-                tValueDisplay.textContent = formatNumber(t);
-                tExplanationDisplay.textContent = `Delta: ${formatNumber(t)} (provided gems exceed objective by ${formatNumber(absValue)}).`;
-            } else {
-                tValueDisplay.textContent = formatNumber(perValueExcess);
-                tExplanationDisplay.textContent = `This represents an excess of ${formatNumber(absValue)} per gem (total ${formatNumber(totalExcess)} across ${3 - providedCount} gems).`;
-            }
-        } else {
-            tValueDisplay.textContent = formatNumber(t);
-            const neededDesc = 3 - providedCount === 1 ? "one gem" : `${3 - providedCount} gems`;
-            const verb = 3 - providedCount === 1 ? "is" : "are";
-            tExplanationDisplay.textContent = `${neededDesc} with value ${formatNumber(t)} ${verb} needed.`;
-        }
-
-        const finalGems = [...gems];
-        for (let i = 0; i < 3; i++) {
-            if (finalGems[i] === null) {
-                finalGems[i] = t;
-            }
-        }
-        
-        const ritual = calculateRitual(finalGems[0], finalGems[1], finalGems[2], effectiveBonus);
-        displayResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus, 
-            ritual.finalTotal, ritual.wasAdjusted, effectiveBonus);
+        return;
     }
-});
 
-function displayResults(baseSum, bonusAmount, cappedBonus, finalTotal, wasAdjusted, totalBonus) {
-    // update results display with calculation results
-    totalBonusObtainedEl.textContent = formatNumber(cappedBonus);
-    const bonusPercent = (totalBonus * 100).toFixed(0);
+    const result = calculateRequiredGem(gems, totalBonus);
+    const effectiveBonus = result.disableBonuses ? 0 : totalBonus;
+    const t = result.t;
 
-    if (wasAdjusted) {
-        totalBonusExplanationEl.innerHTML = 
-            `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)} ` +
-            `<span class="highlight">→ Adjusted to: ${formatNumber(cappedBonus)}</span>`;
+    if (t > CONFIG.MAX_GEM_VALUE) {
+        DOM.results.tValue.textContent = "-";
+        DOM.results.tExplanation.textContent = 
+            `Cannot reach objective (${formatNumber(objective)}) with gem values ≤ 999.999.`;
+        DOM.results.totalValue.textContent = "-";
+        DOM.results.totalExplanation.textContent = "";
+        DOM.results.totalBonusObtained.textContent = "-";
+        DOM.results.totalBonusExplanation.textContent = "";
+        return;
+    }
+
+    updateRequiredGemDisplay(t, providedCount, result.disableBonuses);
+    updateFinalResults(gems, t, effectiveBonus);
+};
+
+const updateRequiredGemDisplay = (t, providedCount, disableBonuses) => {
+    // Update display for required gem value 't'
+    if (t < 0) {
+        const absValue = Math.abs(Math.floor(t));
+        const totalExcess = Math.abs(t * (3 - providedCount));
+        
+        DOM.results.tValue.textContent = formatNumber(t);
+        DOM.results.tExplanation.textContent = disableBonuses
+            ? `Delta: ${formatNumber(t)} (provided gems exceed objective by ${formatNumber(absValue)}).`
+            : `This represents an excess of ${formatNumber(absValue)} per gem ` +
+              `(total ${formatNumber(totalExcess)} across ${3 - providedCount} gems).`;
     } else {
-        totalBonusExplanationEl.textContent = 
-            `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)}`;
+        DOM.results.tValue.textContent = formatNumber(t);
+        const neededDesc = 3 - providedCount === 1 ? "one gem" : `${3 - providedCount} gems`;
+        const verb = 3 - providedCount === 1 ? "is" : "are";
+        DOM.results.tExplanation.textContent = 
+            `${neededDesc} with value ${formatNumber(t)} ${verb} needed.`;
+    }
+};
+
+const updateFinalResults = (gems, t, effectiveBonus) => {
+    // Update final results after calculating required gem value
+    const finalGems = gems.map(gem => gem !== null ? gem : t);
+    const ritual = calculateRitual(finalGems[0], finalGems[1], finalGems[2], effectiveBonus);
+    updateResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus,
+        ritual.finalTotal, ritual.wasAdjusted, effectiveBonus);
+};
+
+const setupEventListeners = () => {
+    // initialize event listeners for inputs and buttons
+    DOM.calculateBtn.addEventListener('click', performCalculation);    
+    DOM.bonuses.totem.addEventListener('change', updateTotemImage);
+    
+    // Objective selection
+    DOM.objective.max.addEventListener('click', () => {
+        DOM.objective.max.checked = true;
+        DOM.objective.min.checked = false;
+        DOM.objective.custom.checked = false;
+        showObjectiveCustomInput(false);
+        setObjective(CONFIG.MAX_GEM_VALUE);
+        DOM.calculateBtn.click();
+    });
+    
+    DOM.objective.min.addEventListener('click', () => {
+        DOM.objective.min.checked = true;
+        DOM.objective.max.checked = false;
+        DOM.objective.custom.checked = false;
+        showObjectiveCustomInput(false);
+        setObjective(CONFIG.MAX_BASE_VALUE);
+        DOM.calculateBtn.click();
+    });
+    
+    DOM.objective.custom.addEventListener('click', () => {
+        DOM.objective.custom.checked = true;
+        DOM.objective.max.checked = false;
+        DOM.objective.min.checked = false;
+        showObjectiveCustomInput(true);
+        DOM.calculateBtn.click();
+    });
+    
+    // Custom objective input
+    if (DOM.objective.customInput) {
+        DOM.objective.customInput.addEventListener('input', function() {
+            this.value = this.value.replace(/\D/g, '');
+            if (this.value) {
+                const v = parseInt(this.value);
+                if (v > CONFIG.MAX_GEM_VALUE) this.value = CONFIG.MAX_GEM_VALUE.toString();
+                // only update image if custom objective is selected
+                if (DOM.objective.custom.checked && DOM.objective.customImg) {
+                    DOM.objective.customImg.src = getGemImageForValue(v);
+                }
+            }
+        });
+
+        DOM.objective.customInput.addEventListener('blur', function() {
+            if (!this.value) return;
+            const v = parseInt(this.value);
+            if (isNaN(v) || v < 300) {
+                this.value = '300';
+                // only update image if custom objective is selected
+                if (DOM.objective.custom.checked && DOM.objective.customImg) {
+                    DOM.objective.customImg.src = getGemImageForValue(300);
+                }
+            }
+        });
+    }
+};
+
+const init = () => {
+    // Initialize the application
+    setupInputValidation();
+    setupEventListeners();
+    updateTotemImage();
+    
+    // Initialize gem images
+    updateGemImageForInput(DOM.gemInputs.x, DOM.gemImages.x);
+    updateGemImageForInput(DOM.gemInputs.y, DOM.gemImages.y);
+    updateGemImageForInput(DOM.gemInputs.z, DOM.gemImages.z);
+    
+    // Initialize custom objective image
+     if (DOM.objective.customImg && DOM.objective.customInput) {
+        const v = DOM.objective.customInput.value.trim() 
+            ? parseInt(DOM.objective.customInput.value) : 300;
+        DOM.objective.customImg.src = getGemImageForValue(v);
     }
     
-    totalValueDisplay.textContent = formatNumber(finalTotal);
-    totalExplanationDisplay.textContent = `${formatNumber(baseSum)} + ${bonusPercent}% = ${formatNumber(finalTotal)}`;
-}
+    // Perform initial calculation
+    DOM.calculateBtn.click();
+};
 
-// Update totem image depending on checkbox
-function updateTotemImage() {
-    if (!totemImg) return;
-    if (totemBonusCheck && totemBonusCheck.checked) {
-        totemImg.src = 'img/golden-totem.png';
-    } else {
-        totemImg.src = 'img/normal-totem.png';
-    }
-}
-
-totemBonusCheck.addEventListener('change', updateTotemImage);
-window.addEventListener('DOMContentLoaded', function() {
-    // initial setup on page load
-    updateTotemImage();
-    // init gem images based on current input values
-    updateGemImageForInput(xInput, gemXImg);
-    updateGemImageForInput(yInput, gemYImg);
-    updateGemImageForInput(zInput, gemZImg);
-    // ensure custom input hidden initially
-    if (objCustomInput) objCustomInput.style.display = 'none';
-    calculateBtn.click();
-});
-
-// change target objective when checkboxes are clicked
-objMaxCheck.addEventListener('click', () => {
-    objMaxCheck.checked = true;
-    objMinCheck.checked = false;
-    if (objCustomCheck) objCustomCheck.checked = false;
-    if (objCustomInput) objCustomInput.style.display = 'none';
-    const note = document.getElementById('obj-custom-note');
-    if (note) note.style.display = 'none';
-    const label = document.getElementById('obj-custom-check-label');
-    if (label) label.style.display = 'inline';
-    objective = maxGemValue;
-    if (objCustomImg) objCustomImg.src = getGemImageForValue(objective);
-    calculateBtn.click();
-});
-
-objMinCheck.addEventListener('click', () => {
-    objMinCheck.checked = true;
-    objMaxCheck.checked = false;
-    if (objCustomCheck) objCustomCheck.checked = false;
-    if (objCustomInput) objCustomInput.style.display = 'none';
-    const note = document.getElementById('obj-custom-note');
-    if (note) note.style.display = 'none';
-    const label = document.getElementById('obj-custom-check-label');
-    if (label) label.style.display = 'inline';
-    objective = maxBaseValue;
-    if (objCustomImg) objCustomImg.src = getGemImageForValue(objective);
-    calculateBtn.click();
-});
-
-if (objCustomCheck) {
-    objCustomCheck.addEventListener('click', () => {
-        objCustomCheck.checked = true;
-        objMaxCheck.checked = false;
-        objMinCheck.checked = false;
-        if (objCustomInput) objCustomInput.style.display = 'inline-block';
-        const note = document.getElementById('obj-custom-note');
-        if (note) note.style.display = 'block';
-        const label = document.getElementById('obj-custom-check-label');
-        if (label) label.style.display = 'none';
-        const current = objCustomInput && objCustomInput.value ? parseInt(objCustomInput.value) : null;
-        if (objCustomImg) objCustomImg.src = getGemImageForValue(current);
-        calculateBtn.click();
-    });
-}
-
-if (objCustomInput) {
-    objCustomInput.addEventListener('input', function() {
-        this.value = this.value.replace(/\D/g, '');
-        if (this.value) {
-            const v = parseInt(this.value);
-            if (v > maxGemValue) this.value = maxGemValue.toString();
-            if (objCustomImg) objCustomImg.src = getGemImageForValue(v);
-        }
-    });
-    objCustomInput.addEventListener('blur', function() {
-        if (!this.value) return;
-        const v = parseInt(this.value);
-        if (isNaN(v) || v < 300) {
-            this.value = '300';
-            if (objCustomImg) objCustomImg.src = getGemImageForValue(300);
-        }
-    });
-}
-
-// ensure objective custom image updates on load and when toggling custom option
-window.addEventListener('DOMContentLoaded', function() {
-    if (objCustomInput && objCustomImg) {
-        const v = objCustomInput.value ? parseInt(objCustomInput.value) : null;
-        objCustomImg.src = getGemImageForValue(v);
-    }
-});
+// start the app once DOM is loaded
+window.addEventListener('DOMContentLoaded', init);

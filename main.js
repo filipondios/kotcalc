@@ -22,6 +22,7 @@ const totalExplanationDisplay = document.getElementById('total-explanation');
 const totalBonusObtainedEl = document.getElementById('total-bonus-obtained');
 const totalBonusExplanationEl = document.getElementById('total-bonus-explanation');
 const totemImg = document.getElementById('totem-img');
+const objCustomImg = document.getElementById('obj-custom-img');
 // Gem icons next to inputs
 const gemXImg = document.getElementById('gem-x-img');
 const gemYImg = document.getElementById('gem-y-img');
@@ -40,6 +41,18 @@ const bonusesConfig = {
     gemWizard: { el: gemWizardCheck, percent: 0.20, label: 'Gem Wizard' }
 };
 
+const gemRanges = [
+    { min: 0, max: 299, image: 'img/gem-blue-1.png' },
+    { min: 300, max: 999, image: 'img/gem-blue-2.png' },
+    { min: 1000, max: 2999, image: 'img/gem-blue-3.png' },
+    { min: 3000, max: 9999, image: 'img/gem-blue-4.png' },
+    { min: 10000, max: 29999, image: 'img/gem-blue-5.png' },
+    { min: 30000, max: 99999, image: 'img/gem-blue-6.png' },
+    { min: 100000, max: 299999, image: 'img/gem-blue-7.png' },
+    { min: 300000, max: 999999, image: 'img/gem-blue-8.png' },
+    { min: 1000000, max: maxGemValue - 1, image: 'img/gem-blue-9.png' },
+    { min: maxGemValue, max: maxGemValue, image: 'img/perfect-gem.png' }
+];
 
 function formatNumber(num) {
     // format number with thousands separators (dots)
@@ -54,16 +67,11 @@ function parseGemValue(value) {
     return isNaN(parsed)? null : Math.max(0, parsed);
 }
 
-// Determine image filename for a gem value
 function getGemImageForValue(v) {
-    if (v == null || v < 300) return 'img/gem-blue-1.png';
-    if (v >= 300 && v < 1000) return 'img/gem-blue-2.png';
-    if (v >= 1000 && v < 3000) return 'img/gem-blue-3.png';
-    if (v >= 3000 && v < 10000) return 'img/gem-blue-4.png';
-    if (v >= 10000 && v < 30000) return 'img/gem-blue-5.png';
-    if (v >= 30000 && v < 100000) return 'img/gem-blue-6.png';
-    if (v >= 100000 && v < 300000) return 'img/gem-blue-7.png';
-    return 'img/gem-blue-8.png';
+    // get gem image path for given value
+    if (v == null) return gemRanges[0].image;
+    const range = gemRanges.find(range => v >= range.min && v <= range.max);
+    return range ? range.image : gemRanges[gemRanges.length - 1].image;
 }
 
 function updateGemImageForInput(inputEl, imgEl) {
@@ -328,6 +336,7 @@ objMaxCheck.addEventListener('click', () => {
     const label = document.getElementById('obj-custom-check-label');
     if (label) label.style.display = 'inline';
     objective = maxGemValue;
+    if (objCustomImg) objCustomImg.src = getGemImageForValue(objective);
     calculateBtn.click();
 });
 
@@ -341,6 +350,7 @@ objMinCheck.addEventListener('click', () => {
     const label = document.getElementById('obj-custom-check-label');
     if (label) label.style.display = 'inline';
     objective = maxBaseValue;
+    if (objCustomImg) objCustomImg.src = getGemImageForValue(objective);
     calculateBtn.click();
 });
 
@@ -354,7 +364,8 @@ if (objCustomCheck) {
         if (note) note.style.display = 'block';
         const label = document.getElementById('obj-custom-check-label');
         if (label) label.style.display = 'none';
-        // do not set objective here; validate on calculation
+        const current = objCustomInput && objCustomInput.value ? parseInt(objCustomInput.value) : null;
+        if (objCustomImg) objCustomImg.src = getGemImageForValue(current);
         calculateBtn.click();
     });
 }
@@ -365,6 +376,7 @@ if (objCustomInput) {
         if (this.value) {
             const v = parseInt(this.value);
             if (v > maxGemValue) this.value = maxGemValue.toString();
+            if (objCustomImg) objCustomImg.src = getGemImageForValue(v);
         }
     });
     objCustomInput.addEventListener('blur', function() {
@@ -372,6 +384,15 @@ if (objCustomInput) {
         const v = parseInt(this.value);
         if (isNaN(v) || v < 300) {
             this.value = '300';
+            if (objCustomImg) objCustomImg.src = getGemImageForValue(300);
         }
     });
 }
+
+// ensure objective custom image updates on load and when toggling custom option
+window.addEventListener('DOMContentLoaded', function() {
+    if (objCustomInput && objCustomImg) {
+        const v = objCustomInput.value ? parseInt(objCustomInput.value) : null;
+        objCustomImg.src = getGemImageForValue(v);
+    }
+});

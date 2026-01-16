@@ -51,11 +51,11 @@ h1 {
 .calculator-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 25px;
+    gap: 10px;
     margin-bottom: 30px;
 }
 
-.input-section, .bonus-section, .results-section {
+.input-section, .bonus-section, .results-section, .objective-section {
     background-color: #0f0f10;
     border-radius: 10px;
     padding: 25px;
@@ -74,7 +74,7 @@ h1 {
 }
 
 .results-section {
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 h2 {
@@ -188,6 +188,22 @@ input[type="checkbox"] {
     margin-bottom: 20px;
 }
 
+.objective-section {
+    grid-column: 1 / -1;
+}
+
+#calculate-btn {
+    grid-column: 1 / -1;
+}
+
+.disclaimer {
+    grid-column: 1 / -1;
+}
+
+.results-section {
+    grid-column: 1 / -1;
+}
+
 .objective-btn {
     flex: 1;
     padding: 14px;
@@ -225,7 +241,7 @@ button {
     font-weight: 600;
     cursor: pointer;
     transition: transform 0.15s;
-    margin-top: 15px;
+    margin-top: 10px;
     letter-spacing: 0.5px;
 }
 
@@ -332,11 +348,10 @@ button:hover {
 
 .footer {
     text-align: center;
-    margin-top: 20px;
-    padding: 30px 20px;
+    padding: 10px 20px 15px 20px;
     background-color: #0d0d0d;
     border-top: 1px solid #262626;
-    border-radius: 12px;
+    border-radius: 0px;
     color: #9ca3af;
     font-size: 0.9rem;
     line-height: 1.8;
@@ -372,7 +387,7 @@ button:hover {
     border: 1px solid #e6b800;
     border-radius: 8px;
     padding: 15px;
-    margin-top: 20px;
+    margin-top: 10px;
     text-align: center;
     font-size: 0.9rem;
     color: #d4d4d4;

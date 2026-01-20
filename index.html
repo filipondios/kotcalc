@@ -9,14 +9,14 @@
 </head>
 <body>
     <div class="container">
-        <div id="site-version" style="text-align:right;color:#71757d;font-size:0.9rem;margin-bottom:6px;">v18.01.2026</div>
+        <div id="site-version">v18.01.2026</div>
         <div class="totem">
             <img id="totem-img" src="img/normal-totem.png" alt="totem" height="150">
         </div>
 
         <div class="calculator-grid">
             <div class="input-section">
-                <h2>Gem Values</h2>
+                <h2>Gem Values <sup class="help-trigger" tabindex="0" data-help-key="gem_values">?</sup></h2>
                 <div class="input-group input-with-gem">
                     <img id="gem-x-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
                     <input type="number" id="x-value" min="100" max="999999" placeholder="Optional">
@@ -29,15 +29,11 @@
                     <img id="gem-z-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
                     <input type="number" id="z-value" min="100" max="999999" placeholder="Optional">
                 </div>
-                <div id="input-errors" class="warning" style="display:none;margin-top:12px"></div>
-                <div class="warning">
-                    <strong>Note:</strong> Enter 0 to 3 values. The calculator will automatically 
-                    determine the required values.
-                </div>
+                <div id="input-errors" class="warning"></div>
             </div>
             
             <div class="bonus-section">
-                <h2>Bonuses</h2>
+                <h2>Bonuses <sup class="help-trigger" tabindex="0" data-help-key="bonuses">?</sup></h2>
                 
                 <div class="input-group">
                     <label for="guild-bonus">Guild Bonus (%)</label>
@@ -67,13 +63,11 @@
                     <input type="checkbox" id="gem-wizard-check">
                     <img src="img/gem-wizard-bonus.png" alt="gem wizard" class="bonus-icon">
                     <label for="gem-wizard-check">Gem Wizard (20%)</label>
-                </div>
-                
-                
+                </div>                
             </div>
 
             <div class="objective-section">
-                <h2>Target Objective</h2>
+                <h2>Target Objective <sup class="help-trigger" tabindex="0" data-help-key="target_objective">?</sup></h2>
                 <div class="input-group" id="target-group">
                     <div class="objective-selector">
                         <div class="checkbox-group objective-option">
@@ -90,8 +84,8 @@
                             <input type="checkbox" name="objective" id="obj-custom-check" class="objective-check">
                             <img id="obj-custom-img" src="img/gem-blue-1.png" alt="custom" class="bonus-icon">
                             <label for="obj-custom-check" id="obj-custom-check-label">Custom</label>
-                            <input type="number" id="obj-custom-input" style="display:none;margin-left:2px;width:150px" placeholder="Custom Value">
-                            <div class="bonus-note obj-custom-note" id="obj-custom-note" style="display:none">Range: 300 - 2.999.997</div>
+                            <input type="number" id="obj-custom-input" placeholder="Custom Value">
+                            <div class="bonus-note obj-custom-note" id="obj-custom-note">Range: 300 - 2.999.997</div>
                         </div>
                     </div>
                 </div>
@@ -100,29 +94,29 @@
         <button id="calculate-btn">Calculate Required Values</button>
         
         <div class="results-section">
-            <h2>Results</h2>
+            <h2>Results <sup class="help-trigger" tabindex="0" data-help-key="results">?</sup></h2>
             <div id="results-container">
-                <div class="result-item">
-                    <div class="result-title">Input gem values</div>
+                <div class="result-item result-input-values">
+                    <div class="result-title">Input gem values <sup class="help-trigger" tabindex="0" data-help-key="result_input_values">?</sup></div>
                     <div class="result-value" id="input-values"></div>
                 </div>
                 
-                <div class="result-item">
-                    <div class="result-title">Applied bonuses</div>
+                <div class="result-item result-applied-bonuses">
+                    <div class="result-title">Applied bonuses <sup class="help-trigger" tabindex="0" data-help-key="result_applied_bonuses">?</sup></div>
                     <div class="result-value" id="bonus-values">0%</div>
                 </div>
-                <div class="result-item">
-                    <div class="result-title">necessary gem value/s</div>
+                <div class="result-item result-required-values">
+                    <div class="result-title">necessary gem value/s <sup class="help-trigger" tabindex="0" data-help-key="result_required_values">?</sup></div>
                     <div class="result-value" id="t-value">-</div>
                     <div class="explanation" id="t-explanation"></div>
                 </div>
-                <div class="result-item">
-                    <div class="result-title">Bonus amount (bonuses only)</div>
+                <div class="result-item result-bonus-amount">
+                    <div class="result-title">Bonus amount (bonuses only) <sup class="help-trigger" tabindex="0" data-help-key="result_bonus_amount">?</sup></div>
                     <div class="result-value" id="total-bonus-obtained">-</div>
                     <div class="explanation" id="total-bonus-explanation"></div>
                 </div>
-                <div class="result-item">
-                    <div class="result-title">Total with bonuses</div>
+                <div class="result-item result-total-with-bonuses">
+                    <div class="result-title">Total with bonuses <sup class="help-trigger" tabindex="0" data-help-key="result_total_with_bonuses">?</sup></div>
                     <div class="result-value" id="total-value">-</div>
                     <div class="explanation" id="total-explanation"></div>
                 </div>
@@ -141,6 +135,7 @@
         <p>Made by <strong>Filipondios</strong></p>
         <p>Telegram: <span>@Filipondios</span> | Discord: <span>@Filipondios</span> | GitHub: <a href="https://github.com/filipondios" target="_blank">filipondios</a></p>
     </footer>
+    <script src="help.js?v=18.01.2026"></script>
     <script src="main.js?v=18.01.2026"></script>
 </body>
 </html>

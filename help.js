@@ -149,7 +149,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     // Remove tooltips and overlays on scroll/resize/click to avoid mispositioned tips
-    ['scroll', 'resize', 'click'].forEach(ev => window.addEventListener(ev, () => {
+    ['scroll', 'resize'].forEach(ev => window.addEventListener(ev, () => {
         document.querySelectorAll('.help-tooltip').forEach(t => t.remove());
         document.querySelectorAll('.help-overlay').forEach(o => o.remove());
         document.querySelectorAll('.help-trigger').forEach(el => el.removeAttribute('aria-describedby'));

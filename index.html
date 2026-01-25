@@ -5,69 +5,80 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="img/totem-bonus.png">
     <title>Bonus Calculator</title>
-    <link rel="stylesheet" href="main.css?v=24.01.2026">
+    <link rel="stylesheet" href="css/main.css?v=25.01.2026">
 </head>
 <body>
     <div class="container">
-        <div id="site-version">v24.01.2026</div>
+        <div class="top-bar">
+            <div id="site-version">v25.01.2026</div>
+            <div class="language-switcher">
+                <img src="img/globe-language.svg" alt="" class="language-icon" aria-hidden="true">
+                <label for="language-select" data-i18n="language_label">Language</label>
+                <select id="language-select" data-i18n="language_label" data-i18n-attr="aria-label" aria-label="Language">
+                    <option value="en">English</option>
+                    <option value="es">Español</option>
+                    <option value="ru">Русский</option>
+                </select>
+            </div>
+        </div>
         <div class="totem">
             <img id="totem-img" src="img/normal-totem.png" alt="totem" height="150">
         </div>
 
         <div class="calculator-grid">
             <div class="input-section">
-                <h2>Gem Values <sup class="help-trigger" tabindex="0" data-help-key="gem_values">?</sup></h2>
+                <h2><span data-i18n="gem_values_title">Gem Values</span> <sup class="help-trigger" tabindex="0" data-help-key="gem_values">?</sup></h2>
                 <div class="input-group input-with-gem">
                     <img id="gem-x-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
-                    <input type="number" id="x-value" min="100" max="999999" placeholder="Optional">
+                    <input type="number" id="x-value" min="100" max="999999" placeholder="Optional" data-i18n="input_optional_placeholder" data-i18n-attr="placeholder">
                 </div>
                 <div class="input-group input-with-gem">
                     <img id="gem-y-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
-                    <input type="number" id="y-value" min="100" max="999999" placeholder="Optional">
+                    <input type="number" id="y-value" min="100" max="999999" placeholder="Optional" data-i18n="input_optional_placeholder" data-i18n-attr="placeholder">
                 </div>
                 <div class="input-group input-with-gem">
                     <img id="gem-z-img" src="img/gem-blue-8.png" alt="gem" class="gem-icon">
-                    <input type="number" id="z-value" min="100" max="999999" placeholder="Optional">
+                    <input type="number" id="z-value" min="100" max="999999" placeholder="Optional" data-i18n="input_optional_placeholder" data-i18n-attr="placeholder">
                 </div>
                 <div id="input-errors" class="warning"></div>
             </div>
             
             <div class="bonus-section">
-                <h2>Bonuses <sup class="help-trigger" tabindex="0" data-help-key="bonuses">?</sup></h2>
+                <h2><span data-i18n="bonuses_title">Bonuses</span> <sup class="help-trigger" tabindex="0" data-help-key="bonuses">?</sup></h2>
                 
                 <div class="input-group">
-                    <label for="guild-bonus">Guild Bonus (%)</label>
+                    <label for="guild-bonus" data-i18n="guild_bonus_label">Guild Bonus (%)</label>
                     <input type="number" id="guild-bonus" min="0" max="35" value="35">
-                    <div class="bonus-note">Maximum: 35%</div>
+                    <div class="bonus-note" data-i18n="guild_bonus_max_note">Maximum: 35%</div>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="festival-bonus-check">
                     <img src="img/festival-bonus.png" alt="festival" class="bonus-icon">
-                    <label for="festival-bonus-check">Color Festival (25%)</label>
+                    <label for="festival-bonus-check" data-i18n="bonus_festival_label">Color Festival (25%)</label>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="totem-bonus-check">
                     <img src="img/golden-totem-bonus.png" alt="golden totem" class="bonus-icon">
-                    <label for="totem-bonus-check">Golden Totem (20%)</label>
+                    <label for="totem-bonus-check" data-i18n="bonus_totem_label">Golden Totem (20%)</label>
                 </div>
                 
                 <div class="checkbox-group">
                     <input type="checkbox" id="universal-gem-wizard-check">
                     <img src="img/universal-gem-bonus.png" alt="universal gem wizard" class="bonus-icon">
-                    <label for="universal-gem-wizard-check">Universal Gem Wizard (20%)</label>
+                    <label for="universal-gem-wizard-check" data-i18n="bonus_universal_label">Universal Gem Wizard (20%)</label>
                 </div>
 
                 <div class="checkbox-group">
                     <input type="checkbox" id="gem-wizard-check">
                     <img src="img/gem-wizard-bonus.png" alt="gem wizard" class="bonus-icon">
-                    <label for="gem-wizard-check">Gem Wizard (20%)</label>
+                    <label for="gem-wizard-check" data-i18n="bonus_gem_wizard_label">Gem Wizard (20%)</label>
                 </div>                
             </div>
 
             <div class="objective-section">
-                <h2>Target Objective <sup class="help-trigger" tabindex="0" data-help-key="target_objective">?</sup></h2>
+                <h2><span data-i18n="target_objective_title">Target Objective</span> <sup class="help-trigger" tabindex="0" data-help-key="target_objective">?</sup></h2>
                 <div class="input-group" id="target-group">
                     <div class="objective-selector">
                         <div class="checkbox-group objective-option">
@@ -83,48 +94,48 @@
                         <div class="checkbox-group objective-option" id="obj-custom-container">
                             <input type="checkbox" name="objective" id="obj-custom-check" class="objective-check">
                             <img id="obj-custom-img" src="img/gem-blue-1.png" alt="custom" class="bonus-icon">
-                            <label for="obj-custom-check" id="obj-custom-check-label">Custom</label>
-                            <input type="number" id="obj-custom-input" placeholder="Custom Value">
-                            <div class="bonus-note obj-custom-note" id="obj-custom-note">Range: 300 - 2.999.997</div>
+                            <label for="obj-custom-check" id="obj-custom-check-label" data-i18n="objective_custom_label">Custom</label>
+                            <input type="number" id="obj-custom-input" placeholder="Custom Value" data-i18n="objective_custom_placeholder" data-i18n-attr="placeholder">
+                            <div class="bonus-note obj-custom-note" id="obj-custom-note" data-i18n="objective_custom_range">Range: 300 - 2.999.997</div>
                         </div>
                     </div>
                 </div>
             </div>
 
-        <button id="calculate-btn">Calculate Required Values</button>
+        <button id="calculate-btn" data-i18n="calculate_button">Calculate Required Values</button>
         
         <div class="results-section">
-            <h2>Results <sup class="help-trigger" tabindex="0" data-help-key="results">?</sup></h2>
+            <h2><span data-i18n="results_title">Results</span> <sup class="help-trigger" tabindex="0" data-help-key="results">?</sup></h2>
             <div id="results-container">
                 <div class="result-item result-input-values">
-                    <div class="result-title">Input gem values <sup class="help-trigger" tabindex="0" data-help-key="result_input_values">?</sup></div>
+                    <div class="result-title"><span data-i18n="results_input_values_title">Input gem values</span> <sup class="help-trigger" tabindex="0" data-help-key="result_input_values">?</sup></div>
                     <div class="result-value" id="input-values"></div>
                 </div>
                 
                 <div class="result-item result-applied-bonuses">
-                    <div class="result-title">Applied bonuses <sup class="help-trigger" tabindex="0" data-help-key="result_applied_bonuses">?</sup></div>
+                    <div class="result-title"><span data-i18n="results_applied_bonuses_title">Applied bonuses</span> <sup class="help-trigger" tabindex="0" data-help-key="result_applied_bonuses">?</sup></div>
                     <div class="result-value" id="bonus-values">0%</div>
                 </div>
                 <div class="result-item result-required-values">
-                    <div class="result-title">necessary gem value/s <sup class="help-trigger" tabindex="0" data-help-key="result_required_values">?</sup></div>
+                    <div class="result-title"><span data-i18n="results_required_values_title">necessary gem value/s</span> <sup class="help-trigger" tabindex="0" data-help-key="result_required_values">?</sup></div>
                     <div class="result-value" id="t-value">-</div>
                     <div class="explanation" id="t-explanation"></div>
                 </div>
                 <div class="result-item result-bonus-amount">
-                    <div class="result-title">Bonus amount (bonuses only) <sup class="help-trigger" tabindex="0" data-help-key="result_bonus_amount">?</sup></div>
+                    <div class="result-title"><span data-i18n="results_bonus_amount_title">Bonus amount (bonuses only)</span> <sup class="help-trigger" tabindex="0" data-help-key="result_bonus_amount">?</sup></div>
                     <div class="result-value" id="total-bonus-obtained">-</div>
                     <div class="explanation" id="total-bonus-explanation"></div>
                 </div>
                 <div class="result-item result-total-with-bonuses">
-                    <div class="result-title">Total with bonuses <sup class="help-trigger" tabindex="0" data-help-key="result_total_with_bonuses">?</sup></div>
+                    <div class="result-title"><span data-i18n="results_total_with_bonuses_title">Total with bonuses</span> <sup class="help-trigger" tabindex="0" data-help-key="result_total_with_bonuses">?</sup></div>
                     <div class="result-value" id="total-value">-</div>
                     <div class="explanation" id="total-explanation"></div>
                 </div>
             </div>
         </div>
         <div class="disclaimer">
-            <p><strong>Disclaimer</strong></p>
-            <p>This website is a fan-made, non-commercial tool.<br>
+            <p><strong data-i18n="disclaimer_title">Disclaimer</strong></p>
+            <p data-i18n-html="disclaimer_text_html">This website is a fan-made, non-commercial tool.<br>
             King of Thieves and all related images, names, and assets<br>
             are trademarks and copyrights of Nazara Technologies Limited.<br>
             This project is not affiliated with or endorsed by Nazara Technologies Limited.</p>
@@ -132,13 +143,10 @@
     </div>
 
     <footer class="footer">
-        <p>Made by <strong>Filipondios</strong></p>
+        <p><span data-i18n="footer_made_by">Made by</span> <strong>Filipondios</strong></p>
         <p>Telegram: <span>@Filipondios</span> | Discord: <span>@Filipondios</span> | GitHub: <a href="https://github.com/filipondios" target="_blank">filipondios</a></p>
     </footer>
-    <script src="help.js?v=18.01.2026"></script>
-    <script src="main.js?v=24.01.2026"></script>
+    <script src="js/help.js?v=25.01.2026"></script>
+    <script type="module" src="js/main.js?v=25.01.2026"></script>
 </body>
 </html>
-
-
-

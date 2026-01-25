@@ -1,0 +1,201 @@
+{
+  "default": "en",
+  "languages": ["en", "es", "ru"],
+  "strings": {
+    "page_title": {
+      "en": "Bonus Calculator",
+      "es": "Calculadora de Bonus",
+      "ru": "Калькулятор бонусов"
+    },
+    "language_label": {
+      "en": "Language",
+      "es": "Idioma",
+      "ru": "Язык"
+    },
+    "gem_values_title": {
+      "en": "Gem Values",
+      "es": "Valores de gemas",
+      "ru": "Значения камней"
+    },
+    "bonuses_title": {
+      "en": "Bonuses",
+      "es": "Bonificaciones",
+      "ru": "Бонусы"
+    },
+    "target_objective_title": {
+      "en": "Target Objective",
+      "es": "Objetivo",
+      "ru": "Целевой показатель"
+    },
+    "results_title": {
+      "en": "Results",
+      "es": "Resultados",
+      "ru": "Результаты"
+    },
+    "input_optional_placeholder": {
+      "en": "Optional",
+      "es": "Opcional",
+      "ru": "Необязательно"
+    },
+    "guild_bonus_label": {
+      "en": "Guild Bonus (%)",
+      "es": "Bonus de gremio (%)",
+      "ru": "Бонус гильдии (%)"
+    },
+    "guild_bonus_max_note": {
+      "en": "Maximum: 35%",
+      "es": "Máximo: 35%",
+      "ru": "Максимум: 35%"
+    },
+    "bonus_festival_label": {
+      "en": "Color Festival (25%)",
+      "es": "Festival de colores (25%)",
+      "ru": "Фестиваль цветов (25%)"
+    },
+    "bonus_totem_label": {
+      "en": "Golden Totem (20%)",
+      "es": "Tótem dorado (20%)",
+      "ru": "Золотой тотем (20%)"
+    },
+    "bonus_universal_label": {
+      "en": "Universal Gem Wizard (20%)",
+      "es": "Mago de gemas universales (20%)",
+      "ru": "Универсальный маг камней (20%)"
+    },
+    "bonus_gem_wizard_label": {
+      "en": "Gem Wizard (20%)",
+      "es": "Mago de gemas (20%)",
+      "ru": "Маг камней (20%)"
+    },
+    "objective_custom_label": {
+      "en": "Custom",
+      "es": "Personalizado",
+      "ru": "Пользовательский"
+    },
+    "objective_custom_placeholder": {
+      "en": "Custom Value",
+      "es": "Valor personalizado",
+      "ru": "Пользовательское значение"
+    },
+    "objective_custom_range": {
+      "en": "Range: 300 - 2.999.997",
+      "es": "Rango: 300 - 2.999.997",
+      "ru": "Диапазон: 300–2 999 997"
+    },
+    "calculate_button": {
+      "en": "Calculate Required Values",
+      "es": "Calcular valores necesarios",
+      "ru": "Рассчитать необходимые значения"
+    },
+    "results_input_values_title": {
+      "en": "Input gem values",
+      "es": "Valores de gemas introducidos",
+      "ru": "Введённые значения камней"
+    },
+    "results_applied_bonuses_title": {
+      "en": "Applied bonuses",
+      "es": "Bonificaciones aplicadas",
+      "ru": "Применённые бонусы"
+    },
+    "results_required_values_title": {
+      "en": "Required gem value(s)",
+      "es": "Valor/es de gema necesarios",
+      "ru": "Требуемые значения камней"
+    },
+    "results_bonus_amount_title": {
+      "en": "Bonus amount",
+      "es": "Cantidad de bonus",
+      "ru": "Размер бонуса"
+    },
+    "results_total_with_bonuses_title": {
+      "en": "Total with bonuses",
+      "es": "Total con bonus",
+      "ru": "Итого с бонусами"
+    },
+    "disclaimer_title": {
+      "en": "Disclaimer",
+      "es": "Aviso",
+      "ru": "Отказ от ответственности"
+    },
+    "disclaimer_text_html": {
+      "en": "This website is a fan-made, non-commercial tool.<br>King of Thieves and all related images, names, and assets<br>are trademarks and copyrights of Nazara Technologies Limited.<br>This project is not affiliated with or endorsed by Nazara Technologies Limited.",
+      "es": "Esta web es una herramienta de fans, sin fines comerciales.<br>King of Thieves y todas las imágenes, nombres y recursos relacionados<br>son marcas registradas y derechos de autor de Nazara Technologies Limited.<br>Este proyecto no está afiliado ni respaldado por Nazara Technologies Limited.",
+      "ru": "Этот сайт - фанатский некоммерческий инструмент.<br>King of Thieves и все связанные изображения, названия и ресурсы<br>являются товарными знаками и объектами авторского права Nazara Technologies Limited.<br>Этот проект не аффилирован и не одобрен Nazara Technologies Limited."
+    },
+    "footer_made_by": {
+      "en": "Made by",
+      "es": "Hecho por",
+      "ru": "Сделано"
+    },
+    "value_na": {
+      "en": "N/A",
+      "es": "N/D",
+      "ru": "Н/Д"
+    },
+    "all_gems_provided": {
+      "en": "All three gem values have been provided.",
+      "es": "Se han proporcionado las tres gemas.",
+      "ru": "Все три значения камней указаны."
+    },
+    "cannot_reach_objective": {
+      "en": "Cannot reach objective ({objective}) with gem values ≤ 999.999.",
+      "es": "No se puede alcanzar el objetivo ({objective}) con gemas ≤ 999.999.",
+      "ru": "Невозможно достичь цели ({objective}) со значениями камней ≤ 999 999."
+    },
+    "delta_exceeds_objective": {
+      "en": "Delta: {delta} (provided gems exceed objective by {excess}).",
+      "es": "Delta: {delta} (las gemas introducidas superan el objetivo en {excess}).",
+      "ru": "Дельта: {delta} (введённые камни превышают цель на {excess})."
+    },
+    "excess_per_gem": {
+      "en": "This represents an excess of {excess} per gem (total {total} across {count} gems).",
+      "es": "Esto representa un exceso de {excess} por gema (total {total} en {count} gemas).",
+      "ru": "Это означает превышение {excess} на один камень (всего {total} для {count} камней)."
+    },
+    "needed_gems_one": {
+      "en": "One gem with value {value} is needed.",
+      "es": "Se necesita una gema con valor {value}.",
+      "ru": "Требуется один камень со значением {value}."
+    },
+    "needed_gems_many": {
+      "en": "{count} gems with value {value} are needed.",
+      "es": "Se necesitan {count} gemas con valor {value}.",
+      "ru": "Требуется {count} камней со значением {value}."
+    },
+    "bonus_guild_label": {
+      "en": "Guild",
+      "es": "Gremio",
+      "ru": "Гильдия"
+    },
+    "bonus_festival_short": {
+      "en": "Festival",
+      "es": "Festival",
+      "ru": "Фестиваль"
+    },
+    "bonus_totem_short": {
+      "en": "Totem",
+      "es": "Tótem",
+      "ru": "Тотем"
+    },
+    "bonus_universal_short": {
+      "en": "Universal Gem Wizard",
+      "es": "Mago universal",
+      "ru": "Универсальный маг"
+    },
+    "bonus_gem_wizard_short": {
+      "en": "Gem Wizard",
+      "es": "Mago de gemas",
+      "ru": "Маг камней"
+    },
+    "bonus_adjusted_html": {
+      "en": "{percent}% of {base} = {bonus} <span class=\"highlight\">→ Adjusted to: {capped}</span>",
+      "es": "{percent}% de {base} = {bonus} <span class=\"highlight\">→ Ajustado a: {capped}</span>",
+      "ru": "{percent}% от {base} = {bonus} <span class=\"highlight\">→ Скорректировано до {capped}</span>"
+    },
+    "bonus_standard_html": {
+      "en": "{percent}% of {base} = {bonus}",
+      "es": "{percent}% de {base} = {bonus}",
+      "ru": "{percent}% от {base} = {bonus}"
+    }
+  }
+}

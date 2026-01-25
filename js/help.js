@@ -2,6 +2,11 @@
 let helpStrings = {};
 let currentLang = 'en';
 
+// Expose a simple API to change language at runtime
+window.help = window.help || {};
+window.help.setLanguage = function (lang) { currentLang = lang; };
+window.help.getLanguage = function () { return currentLang; };
+
 const HELP_TUPLES = [
     ['.input-section', 'gem_values'],
     ['.bonus-section', 'bonuses'],
@@ -14,9 +19,8 @@ const HELP_TUPLES = [
     ['.result-total-with-bonuses', 'result_total_with_bonuses']];
 const HELP_MAP = new Map(HELP_TUPLES.map(([selector, key]) => [key, selector]));
 
-
 function loadHelpJSON() {
-    return fetch('help.json')
+    return fetch('data/help.json')
         .then(r => r.ok ? r.json() : Promise.reject('no-help-json'))
         .then(data => {
             // Only set currentLang from JSON if it wasn't explicitly set in this script.
@@ -36,11 +40,6 @@ function getHelpText(trigger) {
 document.addEventListener('DOMContentLoaded', function () {
     const triggers = document.querySelectorAll('.help-trigger');
     loadHelpJSON();
-
-    // Expose a simple API to change language at runtime
-    window.help = window.help || {};
-    window.help.setLanguage = function (lang) { currentLang = lang; };
-    window.help.getLanguage = function () { return currentLang; };
 
     triggers.forEach(trigger => {
         function createTooltip() {

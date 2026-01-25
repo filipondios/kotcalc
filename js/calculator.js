@@ -1,3 +1,5 @@
+import { t } from './i18n.js';
+
 const CONFIG = {
     MAX_GEM_VALUE: 2999997,
     MAX_BASE_VALUE: 999999,
@@ -144,11 +146,11 @@ const getBonusesBreakdown = (totalBonus) => {
     const guildPercent = Math.round(((parseInt(DOM.bonuses.guild.value) || 0) / 100) * 100);
     const parts = [];
     
-    if (guildPercent > 0) parts.push(`Guild: ${guildPercent}%`);
-    if (DOM.bonuses.festival.checked) parts.push('Festival: 25%');
-    if (DOM.bonuses.totem.checked) parts.push('Totem: 20%');
-    if (DOM.bonuses.universal.checked) parts.push('Universal Gem Wizard: 20%');
-    if (DOM.bonuses.gemWizard.checked) parts.push('Gem Wizard: 20%');
+    if (guildPercent > 0) parts.push(`${t('bonus_guild_label')}: ${guildPercent}%`);
+    if (DOM.bonuses.festival.checked) parts.push(`${t('bonus_festival_short')}: 25%`);
+    if (DOM.bonuses.totem.checked) parts.push(`${t('bonus_totem_short')}: 20%`);
+    if (DOM.bonuses.universal.checked) parts.push(`${t('bonus_universal_short')}: 20%`);
+    if (DOM.bonuses.gemWizard.checked) parts.push(`${t('bonus_gem_wizard_short')}: 20%`);
     
     return {
         percentage: `${(totalBonus * 100).toFixed(0)}%`,
@@ -172,7 +174,8 @@ const updateTotemImage = () => {
 
 const updateDisplay = (gems, totalBonus) => {
     // Update input gem values display
-    const displays = gems.map(g => g === null ? "N/A" : formatNumber(g));
+    const missingLabel = t('value_na');
+    const displays = gems.map(g => g === null ? missingLabel : formatNumber(g));
     DOM.results.inputValues.textContent = displays.join(", ");
     
     const bonusInfo = getBonusesBreakdown(totalBonus);
@@ -188,9 +191,17 @@ const updateResults = (baseSum, bonusAmount, cappedBonus, finalTotal, wasAdjuste
     const bonusPercent = (totalBonus * 100).toFixed(0);
 
     DOM.results.totalBonusExplanation.innerHTML = wasAdjusted
-        ? `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)} ` +
-          `<span class="highlight">→ Adjusted to: ${formatNumber(cappedBonus)}</span>`
-        : `${bonusPercent}% of ${formatNumber(baseSum)} = ${formatNumber(bonusAmount)}`;
+        ? t('bonus_adjusted_html', {
+            percent: bonusPercent,
+            base: formatNumber(baseSum),
+            bonus: formatNumber(bonusAmount),
+            capped: formatNumber(cappedBonus)
+        })
+        : t('bonus_standard_html', {
+            percent: bonusPercent,
+            base: formatNumber(baseSum),
+            bonus: formatNumber(bonusAmount)
+        });
     
     DOM.results.totalValue.textContent = formatNumber(finalTotal);
     DOM.results.totalExplanation.textContent = 
@@ -274,7 +285,7 @@ const performCalculation = () => {
     if (providedCount === 3) {
         const ritual = calculateRitual(gems[0], gems[1], gems[2], totalBonus);
         DOM.results.tValue.textContent = "-";
-        DOM.results.tExplanation.textContent = "All three gem values have been provided.";
+        DOM.results.tExplanation.textContent = t('all_gems_provided');
         updateResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus,
             ritual.finalTotal, ritual.wasAdjusted, totalBonus);
         return;
@@ -282,12 +293,12 @@ const performCalculation = () => {
 
     const result = calculateRequiredGem(gems, totalBonus);
     const effectiveBonus = result.disableBonuses ? 0 : totalBonus;
-    const t = result.t;
+    const tValue = result.t;
 
-    if (t > CONFIG.MAX_GEM_VALUE) {
+    if (tValue > CONFIG.MAX_GEM_VALUE) {
         DOM.results.tValue.textContent = "-";
         DOM.results.tExplanation.textContent = 
-            `Cannot reach objective (${formatNumber(objective)}) with gem values ≤ 999.999.`;
+            t('cannot_reach_objective', { objective: formatNumber(objective) });
         DOM.results.totalValue.textContent = "-";
         DOM.results.totalExplanation.textContent = "";
         DOM.results.totalBonusObtained.textContent = "-";
@@ -295,33 +306,39 @@ const performCalculation = () => {
         return;
     }
 
-    updateRequiredGemDisplay(t, providedCount, result.disableBonuses);
-    updateFinalResults(gems, t, effectiveBonus);
+    updateRequiredGemDisplay(tValue, providedCount, result.disableBonuses);
+    updateFinalResults(gems, tValue, effectiveBonus);
 };
 
-const updateRequiredGemDisplay = (t, providedCount, disableBonuses) => {
+const updateRequiredGemDisplay = (tValue, providedCount, disableBonuses) => {
     // Update display for required gem value 't'
-    if (t < 0) {
-        const absValue = Math.abs(Math.floor(t));
-        const totalExcess = Math.abs(t * (3 - providedCount));
+    if (tValue < 0) {
+        const absValue = Math.abs(Math.floor(tValue));
+        const totalExcess = Math.abs(tValue * (3 - providedCount));
         
-        DOM.results.tValue.textContent = formatNumber(t);
+        DOM.results.tValue.textContent = formatNumber(tValue);
         DOM.results.tExplanation.textContent = disableBonuses
-            ? `Delta: ${formatNumber(t)} (provided gems exceed objective by ${formatNumber(absValue)}).`
-            : `This represents an excess of ${formatNumber(absValue)} per gem ` +
-              `(total ${formatNumber(totalExcess)} across ${3 - providedCount} gems).`;
+            ? t('delta_exceeds_objective', {
+                delta: formatNumber(tValue),
+                excess: formatNumber(absValue)
+            })
+            : t('excess_per_gem', {
+                excess: formatNumber(absValue),
+                total: formatNumber(totalExcess),
+                count: (3 - providedCount)
+            });
     } else {
-        DOM.results.tValue.textContent = formatNumber(t);
-        const neededDesc = 3 - providedCount === 1 ? "one gem" : `${3 - providedCount} gems`;
-        const verb = 3 - providedCount === 1 ? "is" : "are";
-        DOM.results.tExplanation.textContent = 
-            `${neededDesc} with value ${formatNumber(t)} ${verb} needed.`;
+        DOM.results.tValue.textContent = formatNumber(tValue);
+        const neededCount = 3 - providedCount;
+        DOM.results.tExplanation.textContent = neededCount === 1
+            ? t('needed_gems_one', { value: formatNumber(tValue) })
+            : t('needed_gems_many', { count: neededCount, value: formatNumber(tValue) });
     }
 };
 
-const updateFinalResults = (gems, t, effectiveBonus) => {
+const updateFinalResults = (gems, tValue, effectiveBonus) => {
     // Update final results after calculating required gem value
-    const finalGems = gems.map(gem => gem !== null ? gem : t);
+    const finalGems = gems.map(gem => gem !== null ? gem : tValue);
     const ritual = calculateRitual(finalGems[0], finalGems[1], finalGems[2], effectiveBonus);
     updateResults(ritual.baseSum, ritual.bonusAmount, ritual.cappedBonus,
         ritual.finalTotal, ritual.wasAdjusted, effectiveBonus);
@@ -385,9 +402,13 @@ const setupEventListeners = () => {
             }
         });
     }
+
+    document.addEventListener('i18n:changed', () => {
+        DOM.calculateBtn.click();
+    });
 };
 
-const init = () => {
+export const initCalculator = () => {
     // Initialize the application
     setupInputValidation();
     setupEventListeners();
@@ -408,6 +429,3 @@ const init = () => {
     // Perform initial calculation
     DOM.calculateBtn.click();
 };
-
-// start the app once DOM is loaded
-window.addEventListener('DOMContentLoaded', init);

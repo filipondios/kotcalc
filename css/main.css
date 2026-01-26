@@ -411,6 +411,7 @@ img {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
+	flex-wrap: nowrap;
 	gap: 12px;
 	margin-bottom: 10px;
 }
@@ -513,8 +514,14 @@ img {
 		font-size: 0.88rem;
 	}
 
-	.top-bar {
-		flex-direction: column;
-		align-items: flex-start;
+	#site-version,
+	.language-switcher,
+	.language-switcher label,
+	.language-switcher select {
+		font-size: 0.82rem;
+	}
+
+	.language-switcher {
+		gap: 6px;
 	}
 }
